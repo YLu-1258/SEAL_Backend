@@ -7,6 +7,7 @@ Runtime link: https://flask.nighthawkcodingsociety.com/
 - Open a Terminal, install nix which requires admin password: 
 ```bash
 sh <(curl -L https://nixos.org/nix/install)
+. /home/eris29/.nix-profile/etc/profile.d/nix.sh
 ```
 
 - ***Restart Terminal***

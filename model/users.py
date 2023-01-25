@@ -12,26 +12,46 @@ from werkzeug.security import generate_password_hash, check_password_hash
 ''' Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along '''
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
-class Post(db.Model):
-    __tablename__ = 'posts'
+class Classes(db.Model):
+    __tablename__ = 'classes'
 
     # Define the Notes schema
     id = db.Column(db.Integer, primary_key=True)
-    note = db.Column(db.Text, unique=False, nullable=False)
-    image = db.Column(db.String, unique=False)
     # Define a relationship in Notes Schema to userID who originates the note, many-to-one (many notes to one user)
     userID = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    per1 = db.Column(db.String(255), unique=False, nullable=False)
+    per2 = db.Column(db.String(255), unique=False, nullable=False)
+    per3 = db.Column(db.String(255), unique=False, nullable=False)
+    per4 = db.Column(db.String(255), unique=False, nullable=False)
+    per5 = db.Column(db.String(255), unique=False, nullable=False)
+    teach1 = db.Column(db.String(255), unique=False, nullable=False)
+    teach2 = db.Column(db.String(255), unique=False, nullable=False)
+    teach3 = db.Column(db.String(255), unique=False, nullable=False)
+    teach4 = db.Column(db.String(255), unique=False, nullable=False)
+    teach5 = db.Column(db.String(255), unique=False, nullable=False)
+    
+
     # Constructor of a Notes object, initializes of instance variables within object
-    def __init__(self, id, note, image):
+    def __init__(self, id, per1, per2, per3, per4, per5, teach1, teach2, teach3, teach4, teach5):
         self.userID = id
-        self.note = note
-        self.image = image
+        self.per1 = per1
+        self.per2 = per2
+        self.per3 = per3
+        self.per4 = per4
+        self.per5 = per5
+        self.teach1 = teach1
+        self.teach2 = teach2
+        self.teach3 = teach3
+        self.teach4 = teach4
+        self.teach5 = teach5
+        
+
 
     # Returns a string representation of the Notes object, similar to java toString()
     # returns string
     def __repr__(self):
-        return "Notes(" + str(self.id) + "," + self.note + "," + str(self.userID) + ")"
+        return "Classes(" + str(self.id) + "," + self.per1 + "," + self.per2 + "," + self.per3 + "," + self.per4 + "," + self.per5  + "," + self.teach1 + "," + self.teach2 + "," + self.teach3 + "," + self.teach4 + "," + self.teach5  + ","+ str(self.userID) + ")"
 
     # CRUD create, adds a new record to the Notes table
     # returns the object added or None in case of an error
@@ -48,19 +68,20 @@ class Post(db.Model):
     # CRUD read, returns dictionary representation of Notes object
     # returns dictionary
     def read(self):
-        # encode image
-        path = app.config['UPLOAD_FOLDER']
-        file = os.path.join(path, self.image)
-        file_text = open(file, 'rb')
-        file_read = file_text.read()
-        file_encode = base64.encodebytes(file_read)
         
         return {
             "id": self.id,
             "userID": self.userID,
-            "note": self.note,
-            "image": self.image,
-            "base64": str(file_encode)
+            "per1": self.per1,
+            "per2": self.per2,
+            "per3": self.per3,
+            "per4": self.per4,
+            "per5": self.per5,
+            "teach1": self.teach1,
+            "teach2": self.teach2,
+            "teach3": self.teach3,
+            "teach4": self.teach4,
+            "teach5": self.teach5
         }
 
 
@@ -74,53 +95,49 @@ class User(db.Model):
 
     # Define the User schema with "vars" from object
     id = db.Column(db.Integer, primary_key=True)
-    _name = db.Column(db.String(255), unique=False, nullable=False)
-    _uid = db.Column(db.String(255), unique=True, nullable=False)
+    _username = db.Column(db.String(255), unique=True, nullable=False)
+    _fullname = db.Column(db.String(255), unique=False, nullable=False)
     _password = db.Column(db.String(255), unique=False, nullable=False)
-    _dob = db.Column(db.Date)
+    _grade = db.Column(db.Integer, unique=False, nullable=False)
 
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
-    posts = db.relationship("Post", cascade='all, delete', backref='users', lazy=True)
+    classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
 
     # constructor of a User object, initializes the instance variables within object (self)
-    def __init__(self, name, uid, password="123qwerty", dob=date.today()):
-        self._name = name    # variables with self prefix become part of the object, 
-        self._uid = uid
+    def __init__(self, username, fullname, password="letmein", grade=9):
+        self._username = username    # variables with self prefix become part of the object, 
+        self._fullname = fullname
         self.set_password(password)
-        self._dob = dob
+        self._grade = grade
 
     # a name getter method, extracts name from object
     @property
-    def name(self):
-        return self._name
+    def username(self):
+        return self._username
     
     # a setter function, allows name to be updated after initial object creation
-    @name.setter
-    def name(self, name):
-        self._name = name
+    @username.setter
+    def username(self, username):
+        self._username = username
     
     # a getter method, extracts email from object
     @property
-    def uid(self):
-        return self._uid
+    def fullname(self):
+        return self._fullname
     
     # a setter function, allows name to be updated after initial object creation
-    @uid.setter
-    def uid(self, uid):
-        self._uid = uid
-        
-    # check if uid parameter matches user id in object, return boolean
-    def is_uid(self, uid):
-        return self._uid == uid
+    @fullname.setter
+    def fullname(self, fullname):
+        self._fullname = fullname
     
     @property
     def password(self):
-        return self._password[0:10] + "..." # because of security only show 1st characters
+        return self._password[0:5] + "..." # because of security only show 1st characters
 
     # update password, this is conventional setter
     def set_password(self, password):
         """Create a hashed password."""
-        self._password = generate_password_hash(password, method='sha256')
+        self._password = generate_password_hash(password, method='sha512')
 
     # check password parameter versus stored/encrypted password
     def is_password(self, password):
@@ -130,19 +147,13 @@ class User(db.Model):
     
     # dob property is returned as string, to avoid unfriendly outcomes
     @property
-    def dob(self):
-        dob_string = self._dob.strftime('%m-%d-%Y')
-        return dob_string
+    def grade(self):
+        return self._grade
     
-    # dob should be have verification for type date
-    @dob.setter
-    def dob(self, dob):
-        self._dob = dob
-    
-    @property
-    def age(self):
-        today = date.today()
-        return today.year - self._dob.year - ((today.month, today.day) < (self._dob.month, self._dob.day))
+    # a setter function, allows name to be updated after initial object creation
+    @grade.setter
+    def grade(self, grade):
+        self._grade = grade
     
     # output content using str(object) in human readable form, uses getter
     # output content using json dumps, this is ready for API response
@@ -166,21 +177,20 @@ class User(db.Model):
     def read(self):
         return {
             "id": self.id,
-            "name": self.name,
-            "uid": self.uid,
-            "dob": self.dob,
-            "age": self.age,
-            "posts": [post.read() for post in self.posts]
+            "username": self.username,
+            "fullname": self.fullname,
+            "grade": self.grade,
+            "classes": [period.read() for period in self.classes]
         }
 
     # CRUD update: updates user name, password, phone
     # returns self
-    def update(self, name="", uid="", password=""):
+    def update(self, username="", fullname="", password=""):
         """only updates values with length"""
-        if len(name) > 0:
-            self.name = name
-        if len(uid) > 0:
-            self.uid = uid
+        if len(username) > 0:
+            self.username = username
+        if len(fullname) > 0:
+            self.fullname = fullname
         if len(password) > 0:
             self.set_password(password)
         db.session.commit()
@@ -202,25 +212,30 @@ def initUsers():
     """Create database and tables"""
     db.create_all()
     """Tester data for table"""
-    u1 = User(name='Thomas Edison', uid='toby', password='123toby', dob=date(1847, 2, 11))
-    u2 = User(name='Nicholas Tesla', uid='niko', password='123niko')
-    u3 = User(name='Alexander Graham Bell', uid='lex', password='123lex')
-    u4 = User(name='Eli Whitney', uid='whit', password='123whit')
-    u5 = User(name='John Mortensen', uid='jm1021', dob=date(1959, 10, 21))
+    u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
+    u2 = User(username='dolfin', fullname='Ethan Zhao', password='CyberPatriot2@', grade=10)
+    u3 = User(username='shattered', fullname='Sophia Tang', password='CyberPatriot3#', grade=10)
+    u4 = User(username='calicocat', fullname='Lily Wu', password='CyberPatriot4$', grade=11)
 
-    users = [u1, u2, u3, u4, u5]
+
+    users = [u1, u2, u3, u4]
+
+    u1.classes.append(Classes(id=u1.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
+    u2.classes.append(Classes(id=u2.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
+    u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
+    u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
 
     """Builds sample user/note(s) data"""
     for user in users:
         try:
-            '''add a few 1 to 4 notes per user'''
-            for num in range(randrange(1, 4)):
-                note = "#### " + user.name + " note " + str(num) + ". \n Generated by test data."
-                user.posts.append(Post(id=user.id, note=note, image='ncs_logo.png'))
-            '''add user/post data to table'''
             user.create()
         except IntegrityError:
             '''fails with bad or duplicate data'''
             db.session.remove()
             print(f"Records exist, duplicate email, or error: {user.uid}")
             
+
+# _username = db.Column(db.String(255), unique=True, nullable=False)
+#     _fullname = db.Column(db.String(255), unique=False, nullable=False)
+#     _password = db.Column(db.String(255), unique=False, nullable=False)
+#     _grade = db.Column(db.Integer, unique=False, nullable=False)
