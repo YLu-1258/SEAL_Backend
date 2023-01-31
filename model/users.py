@@ -154,7 +154,7 @@ class Tasks(db.Model):
             "id": self.id,
             "userID": self.userID,
             "taskName": self.taskName,
-            "time": self.time,
+            "time": self.time
         }
 
 
