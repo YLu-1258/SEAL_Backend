@@ -12,12 +12,36 @@ from werkzeug.security import generate_password_hash, check_password_hash
 ''' Tutorial: https://www.sqlalchemy.org/library.html#tutorials, try to get into Python shell and follow along '''
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
+
+class GPA(db.Model):
+    __tablename__ = 'gpa'
+    # Define the Classes schema
+    id = db.Column(db.Integer, primary_key=True)
+    # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
+    userID = db.Column(db.Integer, db.ForeignKey('users.id'))
+    fives = db.Column(db.Integer, unique=False, nullable=False)
+    fours = db.Column(db.Integer, unique=False, nullable=False)
+    threes = db.Column(db.Integer, unique=False, nullable=False)
+    twos = db.Column(db.Integer, unique=False, nullable=False)
+    ones = db.Column(db.Integer, unique=False, nullable=False)
+    zeroes = db.Column(db.Integer, unique=False, nullable=False)
+
+    def __init__(self, id, fives, fours, threes, twos, ones, zeroes):
+        self.userID = id
+        self.fives = fives
+        self.fours = fours
+        self.threes = threes
+        self.twos = twos
+        self.ones = ones
+        self.zeroes = zeroes
+
+
 class Classes(db.Model):
     __tablename__ = 'classes'
 
-    # Define the Notes schema
+    # Define the Classes schema
     id = db.Column(db.Integer, primary_key=True)
-    # Define a relationship in Notes Schema to userID who originates the note, many-to-one (many notes to one user)
+    # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
     userID = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     per1 = db.Column(db.String(255), unique=False, nullable=False)
@@ -95,9 +119,9 @@ class User(db.Model):
 
     # Define the User schema with "vars" from object
     id = db.Column(db.Integer, primary_key=True)
-    _username = db.Column(db.String(255), unique=True, nullable=False)
-    _fullname = db.Column(db.String(255), unique=False, nullable=False)
-    _password = db.Column(db.String(255), unique=False, nullable=False)
+    _username = db.Column(db.Text, unique=True, nullable=False)
+    _fullname = db.Column(db.Text, unique=False, nullable=False)
+    _password = db.Column(db.Text, unique=False, nullable=False)
     _grade = db.Column(db.Integer, unique=False, nullable=False)
 
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
@@ -221,7 +245,7 @@ def initUsers():
     users = [u1, u2, u3, u4]
 
     u1.classes.append(Classes(id=u1.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
-    u2.classes.append(Classes(id=u2.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
+    u2.classes.append(Classes(id=u2.id, per1="AP Calculus AB", per2="AP Biology", per3="Honors Humanities 2", per4="AP Chinese", per5="AP Computer Science: Principles", teach1="Briana West", teach2="Julia Cheskaty", teach3="Jennifer Philyaw", teach4="Ying Tzy Lin", teach5="Sean Yeung"))
     u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
     u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
 
@@ -233,9 +257,3 @@ def initUsers():
             '''fails with bad or duplicate data'''
             db.session.remove()
             print(f"Records exist, duplicate email, or error: {user.uid}")
-            
-
-# _username = db.Column(db.String(255), unique=True, nullable=False)
-#     _fullname = db.Column(db.String(255), unique=False, nullable=False)
-#     _password = db.Column(db.String(255), unique=False, nullable=False)
-#     _grade = db.Column(db.Integer, unique=False, nullable=False)
