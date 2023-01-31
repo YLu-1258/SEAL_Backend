@@ -299,6 +299,7 @@ def initUsers():
     u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
     u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
 
+    # comment to fix merge head
     u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
     u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
     u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
