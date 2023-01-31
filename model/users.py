@@ -109,6 +109,55 @@ class Classes(db.Model):
         }
 
 
+class Tasks(db.Model):
+    __tablename__ = 'tasks'
+
+    # Define the Classes schema
+    id = db.Column(db.Integer, primary_key=True)
+    # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
+    userID = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    taskName = db.Column(db.Text, unique=False, nullable=False)
+    time = db.Column(db.Text, unique=False, nullable=False)
+
+
+    # Constructor of a Notes object, initializes of instance variables within object
+    def __init__(self, id, taskName, time):
+        self.userID = id
+        self.taskName = taskName
+        self.time = time
+        
+
+
+    # Returns a string representation of the Notes object, similar to java toString()
+    # returns string
+    def __repr__(self):
+        return "Tasks(" + str(self.id) + "," + self.taskName + "," + self.time + ","+ str(self.userID) + ")"
+
+    # CRUD create, adds a new record to the Notes table
+    # returns the object added or None in case of an error
+    def create(self):
+        try:
+            # creates a Notes object from Notes(db.Model) class, passes initializers
+            db.session.add(self)  # add prepares to persist person object to Notes table
+            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
+            return self
+        except IntegrityError:
+            db.session.remove()
+            return None
+
+    # CRUD read, returns dictionary representation of Notes object
+    # returns dictionary
+    def read(self):
+        
+        return {
+            "id": self.id,
+            "userID": self.userID,
+            "taskName": self.taskName,
+            "time": self.time,
+        }
+
+
 # Define the User class to manage actions in the 'users' table
 # -- Object Relational Mapping (ORM) is the key concept of SQLAlchemy
 # -- a.) db.Model is like an inner layer of the onion in ORM
@@ -126,6 +175,7 @@ class User(db.Model):
 
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
+    tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
 
     # constructor of a User object, initializes the instance variables within object (self)
     def __init__(self, username, fullname, password="letmein", grade=9):
@@ -248,6 +298,11 @@ def initUsers():
     u2.classes.append(Classes(id=u2.id, per1="AP Calculus AB", per2="AP Biology", per3="Honors Humanities 2", per4="AP Chinese", per5="AP Computer Science: Principles", teach1="Briana West", teach2="Julia Cheskaty", teach3="Jennifer Philyaw", teach4="Ying Tzy Lin", teach5="Sean Yeung"))
     u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
     u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
+
+    u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
+    u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
+    u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
+    u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
     """Builds sample user/note(s) data"""
     for user in users:
