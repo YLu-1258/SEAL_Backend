@@ -171,12 +171,15 @@ class Tasks(db.Model):
 
     # CRUD read, returns dictionary representation of Notes object
     # returns dictionary
+
     def read(self):
         
         return {
             "userID": self.userID,
             "taskName": self.taskName,
-            "time": self.time
+            # "taskNameList": ((self.taskName).split(",")),
+            "time": self.time,
+            # "timeList": ((self.time).split(","))
         }
 
 
