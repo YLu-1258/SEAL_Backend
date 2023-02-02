@@ -174,7 +174,6 @@ class Tasks(db.Model):
     def read(self):
         
         return {
-            "id": self.id,
             "userID": self.userID,
             "taskName": self.taskName,
             "time": self.time
@@ -278,7 +277,9 @@ class User(db.Model):
             "username": self.username,
             "fullname": self.fullname,
             "grade": self.grade,
-            "classes": [period.read() for period in self.classes]
+            "GPA": [grade.read() for grade in self.gpa],
+            "classes": [period.read() for period in self.classes],
+            "tasks": [task.read() for task in self.tasks],      
         }
 
     # CRUD update: updates user name, password, phone
