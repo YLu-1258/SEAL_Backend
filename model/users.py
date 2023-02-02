@@ -1,9 +1,5 @@
 """ database dependencies to support sqliteDB examples """
-from random import randrange
-from datetime import date
-import os, base64
 import json
-
 from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,6 +30,34 @@ class GPA(db.Model):
         self.twos = twos
         self.ones = ones
         self.zeroes = zeroes
+    
+    def __repr__(self):
+        return "GPA(" + str(self.userID) + "," + str(self.fives) + "," + str(self.fours) + ","+ str(self.threes) + "," + str(self.twos) + "," + str(self.ones) + ","+ str(self.zeroes) + ")"
+
+    def create(self):
+        try:
+            # creates a Notes object from Notes(db.Model) class, passes initializers
+            db.session.add(self)  # add prepares to persist person object to Notes table
+            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
+            return self
+        except IntegrityError:
+            db.session.remove()
+            return None
+
+    # CRUD read, returns dictionary representation of Notes object
+    # returns dictionary
+    def read(self):
+        
+        return {
+            "userID": self.userID,
+            "fives": self.fives,
+            "fours": self.fours,
+            "threes": self.threes,
+            "twos": self.twos,
+            "ones": self.ones,
+            "zeroes": self.zeroes
+        }
+
 
 
 class Classes(db.Model):
@@ -75,7 +99,7 @@ class Classes(db.Model):
     # Returns a string representation of the Notes object, similar to java toString()
     # returns string
     def __repr__(self):
-        return "Classes(" + str(self.id) + "," + self.per1 + "," + self.per2 + "," + self.per3 + "," + self.per4 + "," + self.per5  + "," + self.teach1 + "," + self.teach2 + "," + self.teach3 + "," + self.teach4 + "," + self.teach5  + ","+ str(self.userID) + ")"
+        return "Classes(" + str(self.userID) + "," + self.per1 + "," + self.per2 + "," + self.per3 + "," + self.per4 + "," + self.per5  + "," + self.teach1 + "," + self.teach2 + "," + self.teach3 + "," + self.teach4 + "," + self.teach5  + ","+ str(self.userID) + ")"
 
     # CRUD create, adds a new record to the Notes table
     # returns the object added or None in case of an error
@@ -94,7 +118,6 @@ class Classes(db.Model):
     def read(self):
         
         return {
-            "id": self.id,
             "userID": self.userID,
             "per1": self.per1,
             "per2": self.per2,
@@ -132,7 +155,7 @@ class Tasks(db.Model):
     # Returns a string representation of the Notes object, similar to java toString()
     # returns string
     def __repr__(self):
-        return "Tasks(" + str(self.id) + "," + self.taskName + "," + self.time + ","+ str(self.userID) + ")"
+        return "Tasks(" + str(self.userID) + "," + self.taskName + "," + self.time + ","+ str(self.userID) + ")"
 
     # CRUD create, adds a new record to the Notes table
     # returns the object added or None in case of an error
@@ -176,6 +199,7 @@ class User(db.Model):
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
     tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
+    gpa = db.relationship("GPA", cascade="all, delete", backref='users', lazy=True)
 
     # constructor of a User object, initializes the instance variables within object (self)
     def __init__(self, username, fullname, password="letmein", grade=9):
@@ -294,12 +318,19 @@ def initUsers():
 
     users = [u1, u2, u3, u4]
 
+    # Inserting test data into GPA table
+    u1.gpa.append(GPA(id=u1.id, fives=12, fours=22, threes=0, twos=0, ones=0, zeroes=0))
+    u2.gpa.append(GPA(id=u1.id, fives=2, fours=13, threes=2, twos=0, ones=0, zeroes=0))
+    u3.gpa.append(GPA(id=u1.id, fives=0, fours=11, threes=0, twos=1, ones=0, zeroes=0))
+    u4.gpa.append(GPA(id=u1.id, fives=17, fours=11, threes=0, twos=0, ones=0, zeroes=0))
+
+    # Inserting test data into Classes table
     u1.classes.append(Classes(id=u1.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
     u2.classes.append(Classes(id=u2.id, per1="AP Calculus AB", per2="AP Biology", per3="Honors Humanities 2", per4="AP Chinese", per5="AP Computer Science: Principles", teach1="Briana West", teach2="Julia Cheskaty", teach3="Jennifer Philyaw", teach4="Ying Tzy Lin", teach5="Sean Yeung"))
     u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
     u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
 
-    # comment to fix merge head
+    # Inserting test data into Tasks table
     u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
     u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
     u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
