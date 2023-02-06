@@ -1,6 +1,7 @@
 """ database dependencies to support sqliteDB examples """
 import json
 from __init__ import app, db
+from __init__ import reviews_app, reviews_db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -9,6 +10,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
 
+class Reviews(reviews_db.Model):
+    """Insert Code here"""
+
+    
 class GPA(db.Model):
     __tablename__ = 'gpa'
     # Define the Classes schema

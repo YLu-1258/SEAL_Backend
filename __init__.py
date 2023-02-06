@@ -19,6 +19,15 @@ app.config['SECRET_KEY'] = 'SECRET_KEY'
 db = SQLAlchemy(app)
 Migrate(app, db)
 
+reviews_app = Flask(__name__)
+# Setup SQLAlchemy object and properties for the database (db)
+dbURI = 'sqlite:////volumes/reviews.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = dbURI
+app.config['SECRET_KEY'] = 'SECRET_KEY'
+reviews_db = SQLAlchemy(reviews_app)
+Migrate(reviews_app, reviews_db)
+
 # # Images storage
 # app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # maximum size of uploaded content
 # app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']  # supported file types
