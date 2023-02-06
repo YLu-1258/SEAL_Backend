@@ -403,9 +403,9 @@ def initUsers():
     u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
     u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-    u2.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-    u3.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-    u4.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+    u2.classReviews.append(ClassReview(id=u2.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+    u3.classReviews.append(ClassReview(id=u3.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+    u4.classReviews.append(ClassReview(id=u4.id, className='AP CSP',difficulty='3',hoursOfHw='5',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
 
     """Builds sample user/note(s) data"""
     for user in users:
