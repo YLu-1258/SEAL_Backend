@@ -10,8 +10,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
 
-class Reviews(reviews_db.Model):
-    """Insert Code here"""
 
     
 class GPA(db.Model):
@@ -350,6 +348,18 @@ class User(db.Model):
             "classes": [period.read() for period in self.classes],
             "tasks": [task.read() for task in self.tasks],     
             "classReviews": [classReview.read() for classReview in self.classReviews] 
+        }
+
+    def avg_gpa(self):
+        gpas =[grade.read() for grade in self.gpa]
+        print("GPAS:", gpas)
+        total_courses = gpas[0]["fives"] + gpas[0]["fours"] + gpas[0]["threes"] + gpas[0]["twos"] + gpas[0]["ones"] + gpas[0]["zeroes"]
+        avg_w_gpa = (5 * gpas[0]["fives"] + 4 * gpas[0]["fours"] + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
+        avg_uw_gpa = (4 * (gpas[0]["fives"] + gpas[0]["fours"]) + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
+        return {
+            "user_id":  0]["userID"],
+            "avg_w_gpa": avg_w_gpa,
+            "avg_uw_gpa": avg_uw_gpa
         }
 
     # CRUD update: updates user name, password, phone
