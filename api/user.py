@@ -59,7 +59,14 @@ class UserAPI:
             json_ready = [user.avg_gpa() for user in users]
             return jsonify(json_ready)
 
+    class _TotalTime(Resource):
+        def get(self):
+            users = User.query.all()
+            json_ready = [user.total_time() for user in users]
+            return jsonify(json_ready)
+
     # building RESTapi endpoint
     api.add_resource(_Create, '/create')
     api.add_resource(_Read, '/')
     api.add_resource(_AverageGPA, '/gpa')
+    api.add_resource(_TotalTime, '/time')

@@ -357,10 +357,24 @@ class User(db.Model):
         avg_w_gpa = (5 * gpas[0]["fives"] + 4 * gpas[0]["fours"] + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
         avg_uw_gpa = (4 * (gpas[0]["fives"] + gpas[0]["fours"]) + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
         return {
-            "user_id":  0]["userID"],
+            "user_id": gpas[0]["userID"],
             "avg_w_gpa": avg_w_gpa,
             "avg_uw_gpa": avg_uw_gpa
         }
+
+    def total_time(self):
+        data = [item.read() for item in self.tasks][0]
+        tasks = data["taskName"].split(",")
+        times = [int(i) for i in data["time"].split(",")]
+        totaltime = sum(times)
+        print(data)
+        return {
+             "user_id":  data["userID"],
+             "tasks": tasks,
+             "times": times,
+             "totaltime": totaltime
+        }
+
 
     # CRUD update: updates user name, password, phone
     # returns self
