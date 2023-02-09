@@ -426,10 +426,13 @@ class ClassReview(db.Model):
 # Builds working data for testing
 def initUsers():
     """Create database and tables"""
+    
     db.create_all()
+    """
     test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
     db.session.add(test1)
     db.session.commit()
+    """
     """Tester data for table"""
     
     u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
@@ -438,7 +441,6 @@ def initUsers():
     u4 = User(username='calicocat', fullname='Lily Wu', password='CyberPatriot4$', grade=11)
     
 
-    
    
 
     # Inserting test data into GPA table
@@ -459,12 +461,13 @@ def initUsers():
     u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
     u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
-    """
+    
     u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
     u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
     u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
     u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
-    """
+    
+    
 
     users = [u1, u2, u3, u4]
     #Builds sample user/note(s) data

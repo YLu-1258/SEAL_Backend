@@ -18,19 +18,21 @@ class UserAPI:
             
             ''' Avoid garbage in, error checking '''
             # validate name
-            name = body.get('name')
-            if name is None or len(name) < 2:
+            username = body.get('username')
+            if username is None or len(username) < 2:
                 return {'message': f'Name is missing, or is less than 2 characters'}, 210
-            # validate uid
-            uid = body.get('uid')
-            if uid is None or len(uid) < 2:
+            fullname = body.get('fullname')
+            if username is None or len(fullname) < 2:
+                return {'message': f'Name is missing, or is less than 2 characters'}, 210
+            # validate grade
+            grade = body.get('grade')
+            if grade is None:
                 return {'message': f'User ID is missing, or is less than 2 characters'}, 210
             # look for password and dob
             password = body.get('password')
 
             ''' #1: Key code block, setup USER OBJECT '''
-            uo = User(name=name, 
-                      uid=uid)
+            uo = User(username=username, fullname=fullname, password=password,  grade=grade)
             
             ''' Additional garbage error checking '''
             # set password if provided
@@ -45,7 +47,7 @@ class UserAPI:
             if user:
                 return jsonify(user.read())
             # failure returns error
-            return {'message': f'Processed {name}, either a format error or User ID {uid} is duplicate'}, 210
+            return {'message': f'Processed {name}, either a format error or User ID {grade} is duplicate'}, 210
 
     class _Read(Resource):
         def get(self):
