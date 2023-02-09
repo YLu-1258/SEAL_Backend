@@ -355,7 +355,16 @@ class User(db.Model):
             "tasks": [task.read() for task in self.tasks],     
             "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
-     
+    
+    def showClassReview(self):
+        classReviews = [classReview.read() for classReview in self.classReviews] 
+        return{"user_id": classReviews[0]['userID'],
+               "className": classReviews[0]['className'],
+               "difficulty": classReviews[0]['difficulty'],
+               "hoursOfHw": classReviews[0]['hoursOfHw'],
+               "daysBtwTest": classReviews[0]['daysBtwTest'],
+               "memorizationLevel": classReviews[0]['memorizationLevel'],
+               "comments": classReviews[0]['comments']}
     
     def avg_gpa(self):
         gpas =[grade.read() for grade in self.gpa]
@@ -467,7 +476,7 @@ def initUsers():
     u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
     u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
     
-    
+    u1.showClassReview()
 
     users = [u1, u2, u3, u4]
     #Builds sample user/note(s) data

@@ -58,6 +58,12 @@ class UserAPI:
             users = User.query.all()
             json_ready = [user.avg_gpa() for user in users]
             return jsonify(json_ready)
+    
+    class _ShowClassReview(Resource):
+        def get(self):
+            users = User.query.all()
+            json_ready = [user.showClassReview() for user in users]
+            return jsonify(json_ready)
 
     class _TotalTime(Resource):
         def get(self):
@@ -70,3 +76,4 @@ class UserAPI:
     api.add_resource(_Read, '/')
     api.add_resource(_AverageGPA, '/gpa')
     api.add_resource(_TotalTime, '/time')
+    api.add_resource(_ShowClassReview, '/classreview')
