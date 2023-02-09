@@ -371,7 +371,10 @@ class User(db.Model):
         }
 
     def total_time(self):
-        data = [item.read() for item in self.tasks][0]
+        try:
+            data = [item.read() for item in self.tasks][0]
+        except IndexError:
+            return 
         tasks = data["taskName"].split(",")
         times = [int(i) for i in data["time"].split(",")]
         totaltime = sum(times)
