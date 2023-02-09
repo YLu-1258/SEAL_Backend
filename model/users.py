@@ -185,8 +185,9 @@ class Tasks(db.Model):
 
 
 class ClassReview(db.Model):
+    __bind_key__ = 'classReview'
     __tablename__ = 'classReviews'
-
+    
     # Define the Classes schema
     id = db.Column(db.Integer, primary_key=True)
     # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
@@ -268,7 +269,7 @@ class User(db.Model):
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
     tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
     gpa = db.relationship("GPA", cascade="all, delete", backref='users', lazy=True)
-    #classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
+    classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
      
     
     # constructor of a User object, initializes the instance variables within object (self)
@@ -384,10 +385,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 """
 
+"""
 class ClassReview(db.Model):
     __bind_key__ = 'classReview'
     id = db.Column(db.Integer, primary_key=True)
-    
+""" 
 
 
 """Database Creation and Testing """
@@ -398,7 +400,7 @@ class ClassReview(db.Model):
 def initUsers():
     """Create database and tables"""
     db.create_all()
-    test1 = ClassReview(id=11)
+    test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
     db.session.add(test1)
     db.session.commit()
     """Tester data for table"""
