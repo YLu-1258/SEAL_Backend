@@ -358,6 +358,7 @@ class User(db.Model):
         avg_uw_gpa = (4 * (gpas[0]["fives"] + gpas[0]["fours"]) + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
         return {
             "user_id": gpas[0]["userID"],
+            "username": self.username,
             "avg_w_gpa": avg_w_gpa,
             "avg_uw_gpa": avg_uw_gpa
         }
@@ -370,6 +371,7 @@ class User(db.Model):
         print(data)
         return {
              "user_id":  data["userID"],
+             "username": self.username,
              "tasks": tasks,
              "times": times,
              "totaltime": totaltime
