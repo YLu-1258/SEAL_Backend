@@ -47,7 +47,7 @@ class UserAPI:
             if user:
                 return jsonify(user.read())
             # failure returns error
-            return {'message': f'Processed {name}, either a format error or User ID {grade} is duplicate'}, 210
+            return {'message': f'Processed {username}, either a format error or duplicate'}, 210
 
     class _Read(Resource):
         def get(self):
