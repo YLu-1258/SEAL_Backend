@@ -1,7 +1,6 @@
 """ database dependencies to support sqliteDB examples """
 import json
 from __init__ import app, db
-from __init__ import reviews_app, reviews_db
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -10,8 +9,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define the Post class to manage actions in 'posts' table,  with a relationship to 'users' table
 
-
-    
 class GPA(db.Model):
     __tablename__ = 'gpa'
     # Define the Classes schema
@@ -186,6 +183,7 @@ class Tasks(db.Model):
         }
 
 
+
 class ClassReview(db.Model):
     __tablename__ = 'classReviews'
 
@@ -251,22 +249,28 @@ class ClassReview(db.Model):
 # -- a.) db.Model is like an inner layer of the onion in ORM
 # -- b.) User represents data we want to store, something that is built on db.Model
 # -- c.) SQLAlchemy ORM is layer on top of SQLAlchemy Core, then SQLAlchemy engine, SQL
+
 class User(db.Model):
     __tablename__ = 'users'  # table name is plural, class name is singular
 
     # Define the User schema with "vars" from object
     id = db.Column(db.Integer, primary_key=True)
+    
+    
     _username = db.Column(db.Text, unique=True, nullable=False)
     _fullname = db.Column(db.Text, unique=False, nullable=False)
     _password = db.Column(db.Text, unique=False, nullable=False)
     _grade = db.Column(db.Integer, unique=False, nullable=False)
-
+    
+    
+    
     # Defines a relationship between User record and Notes table, one-to-many (one user to many notes)
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
     tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
     gpa = db.relationship("GPA", cascade="all, delete", backref='users', lazy=True)
-    classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
-
+    #classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
+     
+    
     # constructor of a User object, initializes the instance variables within object (self)
     def __init__(self, username, fullname, password="letmein", grade=9):
         self._username = username    # variables with self prefix become part of the object, 
@@ -300,12 +304,12 @@ class User(db.Model):
 
     # update password, this is conventional setter
     def set_password(self, password):
-        """Create a hashed password."""
+        #Create a hashed password.
         self._password = generate_password_hash(password, method='sha512')
 
     # check password parameter versus stored/encrypted password
     def is_password(self, password):
-        """Check against hashed password."""
+        #Check against hashed password.
         result = check_password_hash(self._password, password)
         return result
     
@@ -338,6 +342,7 @@ class User(db.Model):
 
     # CRUD read converts self to dictionary
     # returns dictionary
+    
     def read(self):
         return {
             "id": self.id,
@@ -349,37 +354,12 @@ class User(db.Model):
             "tasks": [task.read() for task in self.tasks],     
             "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
-
-    def avg_gpa(self):
-        gpas =[grade.read() for grade in self.gpa]
-        print("GPAS:", gpas)
-        total_courses = gpas[0]["fives"] + gpas[0]["fours"] + gpas[0]["threes"] + gpas[0]["twos"] + gpas[0]["ones"] + gpas[0]["zeroes"]
-        avg_w_gpa = (5 * gpas[0]["fives"] + 4 * gpas[0]["fours"] + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
-        avg_uw_gpa = (4 * (gpas[0]["fives"] + gpas[0]["fours"]) + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
-        return {
-            "user_id": gpas[0]["userID"],
-            "avg_w_gpa": avg_w_gpa,
-            "avg_uw_gpa": avg_uw_gpa
-        }
-
-    def total_time(self):
-        data = [item.read() for item in self.tasks][0]
-        tasks = data["taskName"].split(",")
-        times = [int(i) for i in data["time"].split(",")]
-        totaltime = sum(times)
-        print(data)
-        return {
-             "user_id":  data["userID"],
-             "tasks": tasks,
-             "times": times,
-             "totaltime": totaltime
-        }
-
-
+     
+    
     # CRUD update: updates user name, password, phone
     # returns self
     def update(self, username="", fullname="", password=""):
-        """only updates values with length"""
+        #only updates values with length
         if len(username) > 0:
             self.username = username
         if len(fullname) > 0:
@@ -396,22 +376,41 @@ class User(db.Model):
         db.session.commit()
         return None
 
+"""
+class User(db.Model):
+    __tablename__ = 'users'  # table name is plural, class name is singular
+
+    # Define the User schema with "vars" from object
+    id = db.Column(db.Integer, primary_key=True)
+"""
+
+class ClassReview(db.Model):
+    __bind_key__ = 'classReview'
+    id = db.Column(db.Integer, primary_key=True)
+    
+
 
 """Database Creation and Testing """
+
 
 
 # Builds working data for testing
 def initUsers():
     """Create database and tables"""
     db.create_all()
+    test1 = ClassReview(id=11)
+    db.session.add(test1)
+    db.session.commit()
     """Tester data for table"""
+    
     u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
     u2 = User(username='dolfin', fullname='Ethan Zhao', password='CyberPatriot2@', grade=10)
     u3 = User(username='shattered', fullname='Sophia Tang', password='CyberPatriot3#', grade=10)
     u4 = User(username='calicocat', fullname='Lily Wu', password='CyberPatriot4$', grade=11)
+    
 
-
-    users = [u1, u2, u3, u4]
+    
+   
 
     # Inserting test data into GPA table
     u1.gpa.append(GPA(id=u1.id, fives=12, fours=22, threes=0, twos=0, ones=0, zeroes=0))
@@ -431,12 +430,15 @@ def initUsers():
     u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
     u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
+    """
     u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
     u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
     u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
     u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
+    """
 
-    """Builds sample user/note(s) data"""
+    users = [u1, u2, u3, u4]
+    #Builds sample user/note(s) data
     for user in users:
         try:
             user.create()
@@ -444,3 +446,6 @@ def initUsers():
             '''fails with bad or duplicate data'''
             db.session.remove()
             print(f"Records exist, duplicate email, or error: {user.uid}")
+    
+    
+   
