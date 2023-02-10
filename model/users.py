@@ -367,7 +367,10 @@ class User(db.Model):
                "comments": classReviews[0]['comments']}
     
     def avg_gpa(self):
-        gpas =[grade.read() for grade in self.gpa]
+        try:
+            gpas = [grade.read() for grade in self.gpa]
+        except IndexError:
+            return
         print("GPAS:", gpas)
         total_courses = gpas[0]["fives"] + gpas[0]["fours"] + gpas[0]["threes"] + gpas[0]["twos"] + gpas[0]["ones"] + gpas[0]["zeroes"]
         avg_w_gpa = (5 * gpas[0]["fives"] + 4 * gpas[0]["fours"] + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
@@ -437,59 +440,60 @@ class ClassReview(db.Model):
 
 # Builds working data for testing
 def initUsers():
-    """Create database and tables"""
-    
-    db.create_all()
-    """
-    test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
-    db.session.add(test1)
-    db.session.commit()
-    """
-    """Tester data for table"""
-    
-    u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
-    u2 = User(username='dolfin', fullname='Ethan Zhao', password='CyberPatriot2@', grade=10)
-    u3 = User(username='shattered', fullname='Sophia Tang', password='CyberPatriot3#', grade=10)
-    u4 = User(username='calicocat', fullname='Lily Wu', password='CyberPatriot4$', grade=11)
-    
-
-   
-
-    # Inserting test data into GPA table
-    u1.gpa.append(GPA(id=u1.id, fives=12, fours=22, threes=0, twos=0, ones=0, zeroes=0))
-    u2.gpa.append(GPA(id=u1.id, fives=2, fours=13, threes=2, twos=0, ones=0, zeroes=0))
-    u3.gpa.append(GPA(id=u1.id, fives=0, fours=11, threes=0, twos=1, ones=0, zeroes=0))
-    u4.gpa.append(GPA(id=u1.id, fives=17, fours=11, threes=0, twos=0, ones=0, zeroes=0))
-
-    # Inserting test data into Classes table
-    u1.classes.append(Classes(id=u1.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
-    u2.classes.append(Classes(id=u2.id, per1="AP Calculus AB", per2="AP Biology", per3="Honors Humanities 2", per4="AP Chinese", per5="AP Computer Science: Principles", teach1="Briana West", teach2="Julia Cheskaty", teach3="Jennifer Philyaw", teach4="Ying Tzy Lin", teach5="Sean Yeung"))
-    u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
-    u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
-
-    # Inserting test data into Tasks table
-    u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
-    u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
-    u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
-    u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
+    with app.app_context():
+        """Create database and tables"""
+        
+        db.create_all()
+        """
+        test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
+        db.session.add(test1)
+        db.session.commit()
+        """
+        """Tester data for table"""
+        
+        u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
+        u2 = User(username='dolfin', fullname='Ethan Zhao', password='CyberPatriot2@', grade=10)
+        u3 = User(username='shattered', fullname='Sophia Tang', password='CyberPatriot3#', grade=10)
+        u4 = User(username='calicocat', fullname='Lily Wu', password='CyberPatriot4$', grade=11)
+        
 
     
-    u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-    u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
-    u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
-    u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
-    
-    u1.showClassReview()
 
-    users = [u1, u2, u3, u4]
-    #Builds sample user/note(s) data
-    for user in users:
-        try:
-            user.create()
-        except IntegrityError:
-            '''fails with bad or duplicate data'''
-            db.session.remove()
-            print(f"Records exist, duplicate email, or error: {user.uid}")
+        # Inserting test data into GPA table
+        u1.gpa.append(GPA(id=u1.id, fives=12, fours=22, threes=0, twos=0, ones=0, zeroes=0))
+        u2.gpa.append(GPA(id=u1.id, fives=2, fours=13, threes=2, twos=0, ones=0, zeroes=0))
+        u3.gpa.append(GPA(id=u1.id, fives=0, fours=11, threes=0, twos=1, ones=0, zeroes=0))
+        u4.gpa.append(GPA(id=u1.id, fives=17, fours=11, threes=0, twos=0, ones=0, zeroes=0))
+
+        # Inserting test data into Classes table
+        u1.classes.append(Classes(id=u1.id, per1="AP English Language", per2="AP Calculus BC", per3="AP Physics C: Mechanics", per4="Court Sports", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="Michelle Lanzi-Sheaman", teach3="Ifeng Liao", teach4="Dale Hanover", teach5="Sean Yeung"))
+        u2.classes.append(Classes(id=u2.id, per1="AP Calculus AB", per2="AP Biology", per3="Honors Humanities 2", per4="AP Chinese", per5="AP Computer Science: Principles", teach1="Briana West", teach2="Julia Cheskaty", teach3="Jennifer Philyaw", teach4="Ying Tzy Lin", teach5="Sean Yeung"))
+        u3.classes.append(Classes(id=u3.id, per1="AP Chemistry", per2="Intro to Finance", per3="AP World History", per4="AP Calculus AB", per5="AP Computer Science: Principles", teach1="Kenneth Ozuna", teach2="Amanda Nelson", teach3="Megan Volger", teach4="Cherie Nydam", teach5="Sean Yeung"))
+        u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
+
+        # Inserting test data into Tasks table
+        u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
+        u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
+        u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
+        u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
+
+        
+        u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+        u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
+        u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
+        u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
+        
+        u1.showClassReview()
+
+        users = [u1, u2, u3, u4]
+        #Builds sample user/note(s) data
+        for user in users:
+            try:
+                user.create()
+            except IntegrityError:
+                '''fails with bad or duplicate data'''
+                db.session.remove()
+                print(f"Records exist, duplicate email, or error: {user.uid}")
+        
+        
     
-    
-   
