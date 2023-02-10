@@ -1,4 +1,4 @@
-import threading
+import threading # thread module
 
 # import "packages" from flask
 from flask import render_template  # import render_template from "public" flask libraries
