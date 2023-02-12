@@ -183,68 +183,6 @@ class Tasks(db.Model):
         }
 
 
-"""
-class ClassReview(db.Model):
-    __bind_key__ = 'classReview'
-    __tablename__ = 'classReviews'
-    
-    # Define the Classes schema
-    id = db.Column(db.Integer, primary_key=True)
-    # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
-    userID = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    className = db.Column(db.String(255), unique=False, nullable=False)
-    difficulty = db.Column(db.String(255), unique=False, nullable=False)
-    hoursOfHw = db.Column(db.String(255), unique=False, nullable=False)
-    daysBtwTest = db.Column(db.String(255), unique=False, nullable=False)
-    memorizationLevel = db.Column(db.String(255), unique=False, nullable=False)
-    comments = db.Column(db.String(255), unique=False, nullable=False)
-
-    # Constructor of a Notes object, initializes of instance variables within object
-    def __init__(self, id, className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments):
-        self.userID = id
-        self.className = className
-        self.difficulty = difficulty
-        self.hoursOfHw = hoursOfHw
-        self.daysBtwTest = daysBtwTest
-        self.memorizationLevel = memorizationLevel
-        self.comments = comments
-        
-
-
-    # Returns a string representation of the Notes object, similar to java toString()
-    # returns string
-    def __repr__(self):
-        return "ClassReview(" + str(self.userID) + "," + self.className+ "," + self.difficulty + "," + self.hoursOfHw + "," + self.daysBtwTest + "," + self.memorizationLevel  + "," + self.comments + ")"
-
-    # CRUD create, adds a new record to the Notes table
-    # returns the object added or None in case of an error
-    def create(self):
-        try:
-            # creates a Notes object from Notes(db.Model) class, passes initializers
-            db.session.add(self)  # add prepares to persist person object to Notes table
-            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
-            return self
-        except IntegrityError:
-            db.session.remove()
-            return None
-
-    # CRUD read, returns dictionary representation of Notes object
-    # returns dictionary
-    def read(self):
-        
-        return {
-            "userID": self.userID,
-            "className": self.className,
-            "difficulty": self.difficulty,
-            "hoursOfHw": self.hoursOfHw,
-            "daysBtwTest": self.daysBtwTest,
-            "memorizationLevel": self.memorizationLevel,
-            "comments": self.comments,
-        }
-"""
-
-
 # Define the User class to manage actions in the 'users' table
 # -- Object Relational Mapping (ORM) is the key concept of SQLAlchemy
 # -- a.) db.Model is like an inner layer of the onion in ORM
@@ -353,19 +291,8 @@ class User(db.Model):
             "GPA": [grade.read() for grade in self.gpa],
             "classes": [period.read() for period in self.classes],
             "tasks": [task.read() for task in self.tasks],     
-            # "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
-    """
-    def showClassReview(self):
-        classReviews = [classReview.read() for classReview in self.classReviews] 
-        return{"user_id": classReviews[0]['userID'],
-               "className": classReviews[0]['className'],
-               "difficulty": classReviews[0]['difficulty'],
-               "hoursOfHw": classReviews[0]['hoursOfHw'],
-               "daysBtwTest": classReviews[0]['daysBtwTest'],
-               "memorizationLevel": classReviews[0]['memorizationLevel'],
-               "comments": classReviews[0]['comments']}
-    """
+
     def avg_gpa(self):
         try:
             gpas = [grade.read() for grade in self.gpa]
@@ -431,23 +358,6 @@ class User(db.Model):
         db.session.commit()
         return None
 
-"""
-class User(db.Model):
-    __tablename__ = 'users'  # table name is plural, class name is singular
-
-    # Define the User schema with "vars" from object
-    id = db.Column(db.Integer, primary_key=True)
-"""
-
-"""
-class ClassReview(db.Model):
-    __bind_key__ = 'classReview'
-    id = db.Column(db.Integer, primary_key=True)
-""" 
-
-
-"""Database Creation and Testing """
-
 
 
 # Builds working data for testing
@@ -456,12 +366,7 @@ def initUsers():
         """Create database and tables"""
         db.init_app(app)
         db.create_all()
-        """
-        test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
-        db.session.add(test1)
-        db.session.commit()
-        """
-        """Tester data for table"""
+
         
         u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
         u2 = User(username='dolfin', fullname='Ethan Zhao', password='CyberPatriot2@', grade=10)
@@ -488,14 +393,6 @@ def initUsers():
         u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
         u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
         u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
-
-        
-        # u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-        # u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
-        # u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
-        # u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
-        
-        # u1.showClassReview()
 
         users = [u1, u2, u3, u4]
         for user in users:
