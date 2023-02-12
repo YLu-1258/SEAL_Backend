@@ -15,14 +15,11 @@ app = Flask(__name__)
 dbURI = 'sqlite:///volumes/users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURI
-app.config['SQLALCHEMY_BINDS'] = {
-    'classReview': 'sqlite:///volumes/classReview.db'
-}
 app.config['SECRET_KEY'] = 'SECRET_KEY'
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 Migrate(app, db)
 
-# # Images storage
-# app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # maximum size of uploaded content
-# app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']  # supported file types
-# app.config['UPLOAD_FOLDER'] = 'volumes/uploads/'  # location of user uploaded content
+# Images storage
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # maximum size of uploaded content
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']  # supported file types
+app.config['UPLOAD_FOLDER'] = 'volumes/uploads/'  # location of user uploaded content

@@ -183,7 +183,7 @@ class Tasks(db.Model):
         }
 
 
-
+"""
 class ClassReview(db.Model):
     __bind_key__ = 'classReview'
     __tablename__ = 'classReviews'
@@ -242,7 +242,7 @@ class ClassReview(db.Model):
             "memorizationLevel": self.memorizationLevel,
             "comments": self.comments,
         }
-
+"""
 
 
 # Define the User class to manage actions in the 'users' table
@@ -454,7 +454,7 @@ class ClassReview(db.Model):
 def initUsers():
     with app.app_context():
         """Create database and tables"""
-        
+        db.init_app(app)
         db.create_all()
         """
         test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
@@ -490,12 +490,12 @@ def initUsers():
         u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
         
-        u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-        u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
-        u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
-        u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
+        # u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+        # u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
+        # u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
+        # u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
         
-        u1.showClassReview()
+        # u1.showClassReview()
 
         users = [u1, u2, u3, u4]
         #Builds sample user/note(s) data
@@ -505,7 +505,7 @@ def initUsers():
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
-                print(f"Records exist, duplicate email, or error: {user.uid}")
+                print(f"Records exist, duplicate uid, or error: {user.uid}")
         
         
     
