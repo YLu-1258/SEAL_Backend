@@ -269,7 +269,7 @@ class User(db.Model):
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
     tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
     gpa = db.relationship("GPA", cascade="all, delete", backref='users', lazy=True)
-    classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
+    # classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
      
     
     # constructor of a User object, initializes the instance variables within object (self)
@@ -353,9 +353,9 @@ class User(db.Model):
             "GPA": [grade.read() for grade in self.gpa],
             "classes": [period.read() for period in self.classes],
             "tasks": [task.read() for task in self.tasks],     
-            "classReviews": [classReview.read() for classReview in self.classReviews] 
+            # "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
-    
+    """
     def showClassReview(self):
         classReviews = [classReview.read() for classReview in self.classReviews] 
         return{"user_id": classReviews[0]['userID'],
@@ -365,7 +365,7 @@ class User(db.Model):
                "daysBtwTest": classReviews[0]['daysBtwTest'],
                "memorizationLevel": classReviews[0]['memorizationLevel'],
                "comments": classReviews[0]['comments']}
-    
+    """
     def avg_gpa(self):
         try:
             gpas = [grade.read() for grade in self.gpa]
@@ -498,7 +498,6 @@ def initUsers():
         # u1.showClassReview()
 
         users = [u1, u2, u3, u4]
-        #Builds sample user/note(s) data
         for user in users:
             try:
                 user.create()
