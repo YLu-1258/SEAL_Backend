@@ -183,7 +183,7 @@ class Tasks(db.Model):
         }
 
 
-
+"""
 class ClassReview(db.Model):
     __bind_key__ = 'classReview'
     __tablename__ = 'classReviews'
@@ -242,7 +242,7 @@ class ClassReview(db.Model):
             "memorizationLevel": self.memorizationLevel,
             "comments": self.comments,
         }
-
+"""
 
 
 # Define the User class to manage actions in the 'users' table
@@ -269,7 +269,7 @@ class User(db.Model):
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
     tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
     gpa = db.relationship("GPA", cascade="all, delete", backref='users', lazy=True)
-    classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
+    # classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
      
     
     # constructor of a User object, initializes the instance variables within object (self)
@@ -353,9 +353,9 @@ class User(db.Model):
             "GPA": [grade.read() for grade in self.gpa],
             "classes": [period.read() for period in self.classes],
             "tasks": [task.read() for task in self.tasks],     
-            "classReviews": [classReview.read() for classReview in self.classReviews] 
+            # "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
-    
+    """
     def showClassReview(self):
         classReviews = [classReview.read() for classReview in self.classReviews] 
         return{"user_id": classReviews[0]['userID'],
@@ -365,7 +365,7 @@ class User(db.Model):
                "daysBtwTest": classReviews[0]['daysBtwTest'],
                "memorizationLevel": classReviews[0]['memorizationLevel'],
                "comments": classReviews[0]['comments']}
-    
+    """
     def avg_gpa(self):
         try:
             gpas = [grade.read() for grade in self.gpa]
@@ -454,7 +454,7 @@ class ClassReview(db.Model):
 def initUsers():
     with app.app_context():
         """Create database and tables"""
-        
+        db.init_app(app)
         db.create_all()
         """
         test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
@@ -490,22 +490,21 @@ def initUsers():
         u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
         
-        u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-        u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
-        u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
-        u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
+        # u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+        # u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
+        # u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
+        # u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
         
-        u1.showClassReview()
+        # u1.showClassReview()
 
         users = [u1, u2, u3, u4]
-        #Builds sample user/note(s) data
         for user in users:
             try:
                 user.create()
             except IntegrityError:
                 '''fails with bad or duplicate data'''
                 db.session.remove()
-                print(f"Records exist, duplicate email, or error: {user.uid}")
+                print(f"Records exist, duplicate uid, or error: {user.uid}")
         
         
     
