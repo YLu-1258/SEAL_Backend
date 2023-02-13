@@ -257,6 +257,21 @@ class ClassReview(db.Model):
             "comments": self.comments,
         }
 
+    def update(self, className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments):
+        #only updates values greater than 0
+        if int(difficulty) >= 0 :
+            self.difficulty = difficulty
+        if int(hoursOfHw) >= 0 :
+            self.hoursOfHw = hoursOfHw
+        if int(daysBtwTest) >= 0 :
+            self.daysBtwTest = daysBtwTest
+        if int(memorizationLevel) >= 0 :
+            self.memorizationLevel = memorizationLevel
+        self.className = className
+        self.comments = comments
+        db.session.commit()
+        return self 
+
 
 # Define the User class to manage actions in the 'users' table
 # -- Object Relational Mapping (ORM) is the key concept of SQLAlchemy
@@ -399,6 +414,36 @@ class User(db.Model):
             "username": self.username,
             "avg_w_gpa": avg_w_gpa,
             "avg_uw_gpa": avg_uw_gpa
+        }
+
+    def showClassReview(self):
+        try:
+            classReviews = [classReview.read() for classReview in self.classReviews]
+            print("CLASSREVIEW: " + str(classReviews[0]))
+            
+            if len(classReviews) < 1:
+                return {
+                    "user_id": None,
+                    "username": None,
+                    "avg_w_gpa": None,
+                    "avg_uw_gpa": None
+                }
+            
+        except IndexError:
+            return {
+            "user_id": None,
+            "username": None,
+            "avg_w_gpa": None,
+            "avg_uw_gpa": None
+        }
+        return {
+            "user_id": classReviews[0]["userID"],
+            "className": classReviews[0]["className"],
+            "difficulty": classReviews[0]["difficulty"],
+            "hoursOfHw": classReviews[0]["hoursOfHw"],
+            "daysBtwTest": classReviews[0]["daysBtwTest"],
+            "memorizationLevel": classReviews[0]["memorizationLevel"],
+            "comments": classReviews[0]["comments"]
         }
 
     def total_time(self):

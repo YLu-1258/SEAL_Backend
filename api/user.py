@@ -4,6 +4,7 @@ from datetime import datetime
 
 from model.users import User
 from model.users import GPA
+from model.users import ClassReview
 
 user_api = Blueprint('user_api', __name__,
                    url_prefix='/api/users')
@@ -15,6 +16,17 @@ def gpa_obj_by_username(username):
     """finds User in table matching username """
     id = User.query.filter_by(_username=username).first().id
     return GPA.query.filter_by(id=id).first()
+
+def classReview_obj_by_username(username):
+    """finds User in table matching username """
+    id = User.query.filter_by(_username=username).first().id
+    return ClassReview.query.filter_by(id=id).first()
+
+def findId(username): 
+    id = User.query.filter_by(_username=username).first().id
+    return id 
+
+
 
 class UserAPI:        
     class _Create(Resource):
@@ -103,6 +115,69 @@ class UserAPI:
             json_ready = [user.showClassReview() for user in users]
             return jsonify(json_ready)
 
+    class _UpdateClassReview(Resource):
+        def put(self):
+            body = request.get_json()
+            username = body.get('username')
+            className = body.get('className')
+            difficulty = int(body.get('difficulty'))
+            hoursOfHw = int(body.get('hoursOfHw'))
+            daysBtwTest = int(body.get('daysBtwTest'))
+            memorizationLevel = int(body.get('memorizationLevel'))
+            comments = body.get('comments')
+            if difficulty < 0:
+                return {'message': f'Invalid number'}, 210
+            if hoursOfHw < 0:
+                return {'message': f'Invalid number'}, 210
+            if daysBtwTest < 0:
+                return {'message': f'Invalid number'}, 210
+            if memorizationLevel < 0:
+                return {'message': f'Invalid number'}, 210
+
+            user = classReview_obj_by_username(username)
+            if user:
+                user.update(className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments)
+            else:
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+            return user.read()
+
+    class _CreateClassReview(Resource):
+        def post(self):
+            ''' Read data for json body '''
+            body = request.get_json()
+            
+
+            username = body.get('username')
+            className = body.get('className')
+            difficulty = body.get('difficulty')
+            hoursOfHw = body.get('hoursOfHw')
+            daysBtwTest = body.get('daysBtwTest')
+            memorizationLevel = body.get('memorizationLevel')
+            comments = body.get('comments')
+            
+            if int(difficulty) < 0:
+                return {'message': f'Invalid number'}, 210
+            if int(hoursOfHw) < 0:
+                return {'message': f'Invalid number'}, 210
+            if int(daysBtwTest) < 0:
+                return {'message': f'Invalid number'}, 210
+            if int(memorizationLevel) < 0:
+                return {'message': f'Invalid number'}, 210
+            
+            id = findId(username)
+            
+            review = ClassReview(id=id, className=className, difficulty=difficulty, hoursOfHw=hoursOfHw, daysBtwTest=daysBtwTest, memorizationLevel=memorizationLevel, comments=comments)
+
+           
+            
+            #I HAVE TO CHANGE THIS VARIABLE NAME LOL
+            reviews = review.create()
+            if reviews:
+                return jsonify(reviews.read())
+            # failure returns error
+            return {'message': f'Processed {username}, either a format error or duplicate'}, 210
+            
+
     class _TotalTime(Resource):
         def get(self):
             users = User.query.all()
@@ -116,3 +191,5 @@ class UserAPI:
     api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_ShowClassReview, '/classreview')
+    api.add_resource(_UpdateClassReview, '/updateclassreview')
+    api.add_resource(_CreateClassReview, '/createclassreview')
