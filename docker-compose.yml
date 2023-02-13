@@ -4,7 +4,7 @@ services:
                 image: seal_backend_v1
                 build: .
                 ports:
-                        - "1337:8086"
+                        - "8133:8086"
                 volumes:
                         - ./volumes:/volumes
                         - ./instance:/instance
