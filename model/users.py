@@ -183,6 +183,67 @@ class Tasks(db.Model):
         }
 
 
+class ClassReview(db.Model):
+    __tablename__ = 'classReview'
+    # Define the Classes schema
+    id = db.Column(db.Integer, primary_key=True)
+    # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
+    userID = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    className = db.Column(db.String(255), unique=False, nullable=False)
+    difficulty = db.Column(db.String(255), unique=False, nullable=False)
+    hoursOfHw = db.Column(db.String(255), unique=False, nullable=False)
+    daysBtwTest = db.Column(db.String(255), unique=False, nullable=False)
+    memorizationLevel = db.Column(db.String(255), unique=False, nullable=False)
+    comments = db.Column(db.String(255), unique=False, nullable=False)
+
+    # Constructor of a Notes object, initializes of instance variables within object
+    def __init__(self, id, className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments):
+        self.userID = id
+        self.className = className
+        self.difficulty = difficulty
+        self.hoursOfHw = hoursOfHw
+        self.daysBtwTest = daysBtwTest
+        self.memorizationLevel = memorizationLevel
+        self.comments = comments
+        
+
+
+    # Returns a string representation of the Notes object, similar to java toString()
+    # returns string
+    def __repr__(self):
+        return "ClassReview(" + str(self.userID) + "," + self.className+ "," + self.difficulty + "," + self.hoursOfHw + "," + self.daysBtwTest + "," + self.memorizationLevel  + "," + self.comments + ")"
+
+    # CRUD create, adds a new record to the Notes table
+    # returns the object added or None in case of an error
+    def create(self):
+        try:
+            # creates a Notes object from Notes(db.Model) class, passes initializers
+            db.session.add(self)  # add prepares to persist person object to Notes table
+            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
+            return self
+        except IntegrityError:
+            db.session.remove()
+            return None
+
+    # CRUD read, returns dictionary representation of Notes object
+    # returns dictionary
+    def read(self):
+        
+        return {
+            "userID": self.userID,
+            "className": self.className,
+            "difficulty": self.difficulty,
+            "hoursOfHw": self.hoursOfHw,
+            "daysBtwTest": self.daysBtwTest,
+            "memorizationLevel": self.memorizationLevel,
+            "comments": self.comments,
+        }
+    
+
+
+
+
 """
 class ClassReview(db.Model):
     __bind_key__ = 'classReview'
@@ -269,7 +330,7 @@ class User(db.Model):
     classes = db.relationship("Classes", cascade='all, delete', backref='users', lazy=True)
     tasks = db.relationship("Tasks", cascade='all, delete', backref='users', lazy=True)
     gpa = db.relationship("GPA", cascade="all, delete", backref='users', lazy=True)
-    # classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
+    classReviews = db.relationship("ClassReview", cascade="all, delete", backref='users', lazy=True)
      
     
     # constructor of a User object, initializes the instance variables within object (self)
@@ -353,7 +414,7 @@ class User(db.Model):
             "GPA": [grade.read() for grade in self.gpa],
             "classes": [period.read() for period in self.classes],
             "tasks": [task.read() for task in self.tasks],     
-            # "classReviews": [classReview.read() for classReview in self.classReviews] 
+            "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
     """
     def showClassReview(self):
@@ -490,10 +551,10 @@ def initUsers():
         u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
 
         
-        # u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
-        # u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
-        # u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
-        # u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
+        u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
+        u2.classReviews.append(ClassReview(id=u2.id, className='AP Biology',difficulty='2',hoursOfHw='1',daysBtwTest='21',memorizationLevel='4',comments='Lots of memorization'))
+        u3.classReviews.append(ClassReview(id=u3.id, className='AP Calculus AB',difficulty='4',hoursOfHw='2',daysBtwTest='21',memorizationLevel='3',comments='Need to understand the concepts'))
+        u4.classReviews.append(ClassReview(id=u4.id, className='AP US History',difficulty='3',hoursOfHw='1',daysBtwTest='7',memorizationLevel='5',comments='Way too much memorization'))
         
         # u1.showClassReview()
 
