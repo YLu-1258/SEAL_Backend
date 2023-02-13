@@ -4,6 +4,7 @@ from datetime import datetime
 
 from model.users import User
 from model.users import GPA
+from model.users import ClassReview
 
 user_api = Blueprint('user_api', __name__,
                    url_prefix='/api/users')
@@ -15,6 +16,11 @@ def gpa_obj_by_username(username):
     """finds User in table matching username """
     id = User.query.filter_by(_username=username).first().id
     return GPA.query.filter_by(id=id).first()
+
+def classReview_obj_by_username(username):
+    """finds User in table matching username """
+    id = User.query.filter_by(_username=username).first().id
+    return ClassReview.query.filter_by(id=id).first()
 
 class UserAPI:        
     class _Create(Resource):
@@ -103,6 +109,32 @@ class UserAPI:
             json_ready = [user.showClassReview() for user in users]
             return jsonify(json_ready)
 
+    class _UpdateClassReview(Resource):
+        def put(self):
+            body = request.get_json()
+            username = body.get('username')
+            className = body.get('className')
+            difficulty = int(body.get('difficulty'))
+            hoursOfHw = int(body.get('hoursOfHw'))
+            daysBtwTest = int(body.get('daysBtwTest'))
+            memorizationLevel = int(body.get('memorizationLevel'))
+            comments = body.get('comments')
+            if difficulty < 0:
+                return {'message': f'Invalid number'}, 210
+            if hoursOfHw < 0:
+                return {'message': f'Invalid number'}, 210
+            if daysBtwTest < 0:
+                return {'message': f'Invalid number'}, 210
+            if memorizationLevel < 0:
+                return {'message': f'Invalid number'}, 210
+
+            user = classReview_obj_by_username(username)
+            if user:
+                user.update(className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments)
+            else:
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+            return user.read()
+
     class _TotalTime(Resource):
         def get(self):
             users = User.query.all()
@@ -116,3 +148,4 @@ class UserAPI:
     api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_ShowClassReview, '/classreview')
+    api.add_resource(_UpdateClassReview, '/updateclassreview')
