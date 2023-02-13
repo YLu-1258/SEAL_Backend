@@ -140,13 +140,15 @@ class Tasks(db.Model):
     # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
     userID = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    taskCompleted = db.Column(db.Text, unique=False, nullable=False)
     taskName = db.Column(db.Text, unique=False, nullable=False)
     time = db.Column(db.Text, unique=False, nullable=False)
 
 
     # Constructor of a Notes object, initializes of instance variables within object
-    def __init__(self, id, taskName, time):
+    def __init__(self, id, taskCompleted, taskName, time):
         self.userID = id
+        self.taskCompleted = taskCompleted
         self.taskName = taskName
         self.time = time
         
@@ -155,7 +157,7 @@ class Tasks(db.Model):
     # Returns a string representation of the Notes object, similar to java toString()
     # returns string
     def __repr__(self):
-        return "Tasks(" + str(self.userID) + "," + self.taskName + "," + self.time + ","+ str(self.userID) + ")"
+        return "Tasks(" + str(self.userID) + "," + self.taskCompleted + self.taskName + "," + self.time + ","+ str(self.userID) + ")"
 
     # CRUD create, adds a new record to the Notes table
     # returns the object added or None in case of an error
@@ -176,6 +178,7 @@ class Tasks(db.Model):
         
         return {
             "userID": self.userID,
+            "taskCompleted": self.taskCompleted,
             "taskName": self.taskName,
             # "taskNameList": ((self.taskName).split(",")),
             "time": self.time,
@@ -400,6 +403,7 @@ class User(db.Model):
         except IndexError:
             return 
         tasks = data["taskName"].split(",")
+        taskCompleted = data["taskCompleted"].split(",")
         times = [int(i) for i in data["time"].split(",")]
         totaltime = sum(times)
         print(data)
@@ -408,7 +412,8 @@ class User(db.Model):
              "username": self.username,
              "tasks": tasks,
              "times": times,
-             "totaltime": totaltime
+             "totaltime": totaltime,
+             "taskCompleted": taskCompleted
         }
 
     # CRUD update: updates user name, password, phone
@@ -484,10 +489,10 @@ def initUsers():
         u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
 
         # Inserting test data into Tasks table
-        u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
-        u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
-        u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
-        u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
+        u1.tasks.append(Tasks(id=u1.id, taskCompleted='1,0', taskName='Backend stuff,APEL HW',time='300,50'))
+        u2.tasks.append(Tasks(id=u2.id, taskCompleted='1,0', taskName='Frontend stuff,AP Calc Study',time='300,30'))
+        u3.tasks.append(Tasks(id=u3.id, taskCompleted='1,0', taskName='AP Chem Lab,APCSP Backend',time='60,300'))
+        u4.tasks.append(Tasks(id=u4.id, taskCompleted='1,0', taskName='APEL HW,APCSA HW',time='50,60'))
 
         
         u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
