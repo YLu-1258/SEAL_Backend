@@ -17,9 +17,6 @@ dbURI = 'sqlite:///' + os.path.join(os.getcwd() + "/volumes/", 'users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = dbURI
 app.config['SECRET_KEY'] = 'SECRET_KEY'
-app.config['SQLALCHEMY_BINDS'] = {
-    'classReview': 'sqlite:///' + os.path.join(os.getcwd() + "/volumes/", 'classReview.db')
-}
 db = SQLAlchemy()
 Migrate(app, db)
 
