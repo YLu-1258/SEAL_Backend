@@ -22,6 +22,12 @@ def classReview_obj_by_username(username):
     id = User.query.filter_by(_username=username).first().id
     return ClassReview.query.filter_by(id=id).first()
 
+def findId(username): 
+    id = User.query.filter_by(_username=username).first().id
+    return id 
+
+
+
 class UserAPI:        
     class _Create(Resource):
         def post(self):
@@ -135,6 +141,43 @@ class UserAPI:
                 return {'message': f"unable to find GPA entries of user '{username}'"}, 210
             return user.read()
 
+    class _CreateClassReview(Resource):
+        def post(self):
+            ''' Read data for json body '''
+            body = request.get_json()
+            
+
+            username = body.get('username')
+            className = body.get('className')
+            difficulty = body.get('difficulty')
+            hoursOfHw = body.get('hoursOfHw')
+            daysBtwTest = body.get('daysBtwTest')
+            memorizationLevel = body.get('memorizationLevel')
+            comments = body.get('comments')
+            
+            if int(difficulty) < 0:
+                return {'message': f'Invalid number'}, 210
+            if int(hoursOfHw) < 0:
+                return {'message': f'Invalid number'}, 210
+            if int(daysBtwTest) < 0:
+                return {'message': f'Invalid number'}, 210
+            if int(memorizationLevel) < 0:
+                return {'message': f'Invalid number'}, 210
+            
+            id = findId(username)
+            
+            review = ClassReview(id=id, className=className, difficulty=difficulty, hoursOfHw=hoursOfHw, daysBtwTest=daysBtwTest, memorizationLevel=memorizationLevel, comments=comments)
+
+           
+            
+            #I HAVE TO CHANGE THIS VARIABLE NAME LOL
+            reviews = review.create()
+            if reviews:
+                return jsonify(reviews.read())
+            # failure returns error
+            return {'message': f'Processed {username}, either a format error or duplicate'}, 210
+            
+
     class _TotalTime(Resource):
         def get(self):
             users = User.query.all()
@@ -149,3 +192,4 @@ class UserAPI:
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
+    api.add_resource(_CreateClassReview, '/createclassreview')
