@@ -58,6 +58,23 @@ class GPA(db.Model):
             "zeroes": self.zeroes
         }
 
+    def update(self, fives, fours, threes, twos, ones, zeroes):
+        #only updates values greater than 0
+        if int(fives) >= 0 :
+            self.fives = fives
+        if int(fours) >= 0 :
+            self.fours = fours
+        if int(threes) >= 0 :
+            self.threes = threes
+        if int(twos) >= 0 :
+            self.twos = twos
+        if int(ones) >= 0 :
+            self.ones = ones
+        if int(zeroes) >= 0 :
+            self.zeroes = zeroes
+        db.session.commit()
+        return self
+
 
 
 class Classes(db.Model):
@@ -222,6 +239,7 @@ class User(db.Model):
     def username(self):
         return self._username
     
+
     # a setter function, allows name to be updated after initial object creation
     @username.setter
     def username(self, username):
@@ -236,6 +254,9 @@ class User(db.Model):
     @fullname.setter
     def fullname(self, fullname):
         self._fullname = fullname
+
+    def get_id(self):
+        return self.id
     
     @property
     def password(self):

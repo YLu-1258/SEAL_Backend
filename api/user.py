@@ -3,12 +3,18 @@ from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 
 from model.users import User
+from model.users import GPA
 
 user_api = Blueprint('user_api', __name__,
                    url_prefix='/api/users')
 
 # API docs https://flask-restful.readthedocs.io/en/latest/api.html
 api = Api(user_api)
+
+def gpa_obj_by_username(username):
+    """finds User in table matching username """
+    id = User.query.filter_by(_username=username).first().id
+    return GPA.query.filter_by(id=id).first()
 
 class UserAPI:        
     class _Create(Resource):
@@ -20,10 +26,10 @@ class UserAPI:
             # validate name
             username = body.get('username')
             if username is None or len(username) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 210
+                return {'message': f'Username is missing, or is less than 2 characters'}, 210
             fullname = body.get('fullname')
-            if username is None or len(fullname) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 210
+            if fullname is None or len(fullname) < 2:
+                return {'message': f'Fullname is missing, or is less than 2 characters'}, 210
             # validate grade
             grade = body.get('grade')
             if grade is None:
@@ -61,6 +67,36 @@ class UserAPI:
             json_ready = [user.avg_gpa() for user in users]
             return jsonify(json_ready)
     
+    class _UpdateGPA(Resource):
+        def put(self):
+            body = request.get_json()
+            username = body.get('username')
+            fives = int(body.get('fives'))
+            fours = int(body.get('fours'))
+            threes = int(body.get('threes'))
+            twos = int(body.get('twos'))
+            ones = int(body.get('ones'))
+            zeroes = int(body.get('zeroes'))
+            if fives < 0:
+                return {'message': f'Invalid number of fives'}, 210
+            if fours < 0:
+                return {'message': f'Invalid number of fours'}, 210
+            if threes < 0:
+                return {'message': f'Invalid number of threes'}, 210
+            if twos < 0:
+                return {'message': f'Invalid number of twos'}, 210
+            if ones < 0:
+                return {'message': f'Invalid number of ones'}, 210
+            if zeroes < 0:
+                return {'message': f'Invalid number of zeroes'}, 210
+
+            user = gpa_obj_by_username(username)
+            if user:
+                user.update(fives, fours, threes, twos, ones, zeroes)
+            else:
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+            return user.read()
+    
     class _ShowClassReview(Resource):
         def get(self):
             users = User.query.all()
@@ -77,5 +113,6 @@ class UserAPI:
     api.add_resource(_Create, '/create')
     api.add_resource(_Read, '/')
     api.add_resource(_AverageGPA, '/gpa')
+    api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_ShowClassReview, '/classreview')
