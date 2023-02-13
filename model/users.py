@@ -58,6 +58,23 @@ class GPA(db.Model):
             "zeroes": self.zeroes
         }
 
+    def update(self, fives, fours, threes, twos, ones, zeroes):
+        #only updates values greater than 0
+        if int(fives) >= 0 :
+            self.fives = fives
+        if int(fours) >= 0 :
+            self.fours = fours
+        if int(threes) >= 0 :
+            self.threes = threes
+        if int(twos) >= 0 :
+            self.twos = twos
+        if int(ones) >= 0 :
+            self.ones = ones
+        if int(zeroes) >= 0 :
+            self.zeroes = zeroes
+        db.session.commit()
+        return self
+
 
 
 class Classes(db.Model):
@@ -239,71 +256,6 @@ class ClassReview(db.Model):
             "memorizationLevel": self.memorizationLevel,
             "comments": self.comments,
         }
-    
-
-
-
-
-"""
-class ClassReview(db.Model):
-    __bind_key__ = 'classReview'
-    __tablename__ = 'classReviews'
-    
-    # Define the Classes schema
-    id = db.Column(db.Integer, primary_key=True)
-    # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
-    userID = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    className = db.Column(db.String(255), unique=False, nullable=False)
-    difficulty = db.Column(db.String(255), unique=False, nullable=False)
-    hoursOfHw = db.Column(db.String(255), unique=False, nullable=False)
-    daysBtwTest = db.Column(db.String(255), unique=False, nullable=False)
-    memorizationLevel = db.Column(db.String(255), unique=False, nullable=False)
-    comments = db.Column(db.String(255), unique=False, nullable=False)
-
-    # Constructor of a Notes object, initializes of instance variables within object
-    def __init__(self, id, className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments):
-        self.userID = id
-        self.className = className
-        self.difficulty = difficulty
-        self.hoursOfHw = hoursOfHw
-        self.daysBtwTest = daysBtwTest
-        self.memorizationLevel = memorizationLevel
-        self.comments = comments
-        
-
-
-    # Returns a string representation of the Notes object, similar to java toString()
-    # returns string
-    def __repr__(self):
-        return "ClassReview(" + str(self.userID) + "," + self.className+ "," + self.difficulty + "," + self.hoursOfHw + "," + self.daysBtwTest + "," + self.memorizationLevel  + "," + self.comments + ")"
-
-    # CRUD create, adds a new record to the Notes table
-    # returns the object added or None in case of an error
-    def create(self):
-        try:
-            # creates a Notes object from Notes(db.Model) class, passes initializers
-            db.session.add(self)  # add prepares to persist person object to Notes table
-            db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
-            return self
-        except IntegrityError:
-            db.session.remove()
-            return None
-
-    # CRUD read, returns dictionary representation of Notes object
-    # returns dictionary
-    def read(self):
-        
-        return {
-            "userID": self.userID,
-            "className": self.className,
-            "difficulty": self.difficulty,
-            "hoursOfHw": self.hoursOfHw,
-            "daysBtwTest": self.daysBtwTest,
-            "memorizationLevel": self.memorizationLevel,
-            "comments": self.comments,
-        }
-"""
 
 
 # Define the User class to manage actions in the 'users' table
@@ -345,6 +297,7 @@ class User(db.Model):
     def username(self):
         return self._username
     
+
     # a setter function, allows name to be updated after initial object creation
     @username.setter
     def username(self, username):
@@ -359,6 +312,9 @@ class User(db.Model):
     @fullname.setter
     def fullname(self, fullname):
         self._fullname = fullname
+
+    def get_id(self):
+        return self.id
     
     @property
     def password(self):
@@ -416,17 +372,7 @@ class User(db.Model):
             "tasks": [task.read() for task in self.tasks],     
             "classReviews": [classReview.read() for classReview in self.classReviews] 
         }
-    """
-    def showClassReview(self):
-        classReviews = [classReview.read() for classReview in self.classReviews] 
-        return{"user_id": classReviews[0]['userID'],
-               "className": classReviews[0]['className'],
-               "difficulty": classReviews[0]['difficulty'],
-               "hoursOfHw": classReviews[0]['hoursOfHw'],
-               "daysBtwTest": classReviews[0]['daysBtwTest'],
-               "memorizationLevel": classReviews[0]['memorizationLevel'],
-               "comments": classReviews[0]['comments']}
-    """
+
     def avg_gpa(self):
         try:
             gpas = [grade.read() for grade in self.gpa]
@@ -492,23 +438,6 @@ class User(db.Model):
         db.session.commit()
         return None
 
-"""
-class User(db.Model):
-    __tablename__ = 'users'  # table name is plural, class name is singular
-
-    # Define the User schema with "vars" from object
-    id = db.Column(db.Integer, primary_key=True)
-"""
-
-"""
-class ClassReview(db.Model):
-    __bind_key__ = 'classReview'
-    id = db.Column(db.Integer, primary_key=True)
-""" 
-
-
-"""Database Creation and Testing """
-
 
 
 # Builds working data for testing
@@ -517,12 +446,7 @@ def initUsers():
         """Create database and tables"""
         db.init_app(app)
         db.create_all()
-        """
-        test1 = ClassReview(id=11, className="test",difficulty="test",hoursOfHw="test",daysBtwTest="test",memorizationLevel="test",comments="test")
-        db.session.add(test1)
-        db.session.commit()
-        """
-        """Tester data for table"""
+
         
         u1 = User(username='eris29', fullname='Alexander Lu', password='CyberPatriot1!', grade=11)
         u2 = User(username='dolfin', fullname='Ethan Zhao', password='CyberPatriot2@', grade=10)
