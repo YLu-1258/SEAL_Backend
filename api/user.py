@@ -217,3 +217,4 @@ class UserAPI:
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
     api.add_resource(_CreateClassReview, '/createclassreview')
+    api.add_resource(_UpdateTasks, '/updatetasks')
