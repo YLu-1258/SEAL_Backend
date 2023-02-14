@@ -26,6 +26,9 @@ def findId(username):
     id = User.query.filter_by(_username=username).first().id
     return id 
 
+def findUser(username): 
+    user = User.query.filter_by(_username=username).first()
+    return user
 
 
 class UserAPI:        
@@ -108,6 +111,22 @@ class UserAPI:
             else:
                 return {'message': f"unable to find GPA entries of user '{username}'"}, 210
             return user.read()
+
+    class _Authenticate(Resource):
+        def get(self):
+            body = request.get_json()
+            username = body.get('username')
+            password = body.get('password')
+            if len(username) < 1:
+                return {'message': f'Invalid username'}, 210
+            if len(password) < 1:
+                return {'message': f'Empty Password'}, 210
+
+            user = findUser(username)
+            if user.is_password(password):
+                return username
+            return False
+
     
     class _ShowClassReview(Resource):
         def get(self):
@@ -193,3 +212,4 @@ class UserAPI:
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
     api.add_resource(_CreateClassReview, '/createclassreview')
+    api.add_resource(_Authenticate, '/auth')

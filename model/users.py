@@ -344,7 +344,10 @@ class User(db.Model):
     def is_password(self, password):
         #Check against hashed password.
         result = check_password_hash(self._password, password)
-        return result
+        if result:
+            return True
+        else:
+            return False
     
     # dob property is returned as string, to avoid unfriendly outcomes
     @property
