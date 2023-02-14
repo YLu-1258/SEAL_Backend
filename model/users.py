@@ -466,6 +466,7 @@ class User(db.Model):
             return 
         tasks = data["taskName"].split(",")
         times = [int(i) for i in data["time"].split(",")]
+        tasksCompleted = [int(i) for i in data["tasksCompleted"].split(",")]
         totaltime = sum(times)
         print(data)
         return {
@@ -473,7 +474,8 @@ class User(db.Model):
              "username": self.username,
              "tasks": tasks,
              "times": times,
-             "totaltime": totaltime
+             "totaltime": totaltime,
+             "tasksCompleted": tasksCompleted
         }
 
     # CRUD update: updates user name, password, phone

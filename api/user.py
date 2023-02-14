@@ -188,6 +188,7 @@ class UserAPI:
     class _TotalTime(Resource):
         def get(self):
             users = User.query.all()
+            # json_ready = [user.read() for user in users]
             json_ready = [user.total_time() for user in users]
             return jsonify(json_ready)
         
