@@ -159,20 +159,22 @@ class Tasks(db.Model):
 
     taskName = db.Column(db.Text, unique=False, nullable=False)
     time = db.Column(db.Text, unique=False, nullable=False)
+    tasksCompleted = db.Column(db.Text, unique=False, nullable=False)
 
 
     # Constructor of a Notes object, initializes of instance variables within object
-    def __init__(self, id, taskName, time):
+    def __init__(self, id, taskName, time, tasksCompleted):
         self.userID = id
         self.taskName = taskName
         self.time = time
+        self.tasksCompleted = tasksCompleted
         
 
 
     # Returns a string representation of the Notes object, similar to java toString()
     # returns string
     def __repr__(self):
-        return "Tasks(" + str(self.userID) + "," + self.taskName + "," + self.time + ","+ str(self.userID) + ")"
+        return "Tasks(" + str(self.userID) + "," + self.taskName + "," + self.time + "," + self.tasksCompleted + ","+ str(self.userID) + ")"
 
     # CRUD create, adds a new record to the Notes table
     # returns the object added or None in case of an error
@@ -196,8 +198,19 @@ class Tasks(db.Model):
             "taskName": self.taskName,
             # "taskNameList": ((self.taskName).split(",")),
             "time": self.time,
+            "tasksCompleted": self.tasksCompleted
             # "timeList": ((self.time).split(","))
         }
+    
+    def update(self, taskName, time, tasksCompleted):
+        if(len(taskName) >= 0):
+            self.taskName = taskName
+        if (len(time) >= 0):
+            self.time = time
+        if(len(tasksCompleted) >= 0):
+            self.tasksCompleted = tasksCompleted
+        db.session.commit()
+        return self
 
 
 class ClassReview(db.Model):
@@ -514,10 +527,10 @@ def initUsers():
         u4.classes.append(Classes(id=u4.id, per1="AP English Language", per2="AP Computer Science A", per3="AP US History", per4="AP Statistics", per5="AP Computer Science: Principles", teach1="Cara-Lisa Jenkins", teach2="John Mortensen", teach3="Thomas Swanson", teach4="Michelle Derksen", teach5="Sean Yeung"))
 
         # Inserting test data into Tasks table
-        u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50'))
-        u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30'))
-        u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300'))
-        u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60'))
+        u1.tasks.append(Tasks(id=u1.id, taskName='Backend stuff,APEL HW',time='300,50',tasksCompleted='0,0'))
+        u2.tasks.append(Tasks(id=u2.id, taskName='Frontend stuff,AP Calc Study',time='300,30',tasksCompleted='0,0'))
+        u3.tasks.append(Tasks(id=u3.id, taskName='AP Chem Lab,APCSP Backend',time='60,300',tasksCompleted='0,1'))
+        u4.tasks.append(Tasks(id=u4.id, taskName='APEL HW,APCSA HW',time='50,60',tasksCompleted='1,0'))
 
         
         u1.classReviews.append(ClassReview(id=u1.id, className='AP CSP',difficulty='3',hoursOfHw='1',daysBtwTest='0',memorizationLevel='0',comments='Lots of projects'))
