@@ -198,6 +198,12 @@ class Tasks(db.Model):
             "time": self.time,
             # "timeList": ((self.time).split(","))
         }
+    
+    def update(self, taskName="", time=""):
+        self.taskName = taskName
+        self.time = time
+        db.session.commit()
+        return self
 
 
 class ClassReview(db.Model):
