@@ -134,8 +134,9 @@ class UserAPI:
                 return {'message': f'Empty Password'}, 210
 
             user = findUser(username)
+            id = findId(username)
             if user.is_password(password):
-                return username
+                return username, id
             return None
 
     
