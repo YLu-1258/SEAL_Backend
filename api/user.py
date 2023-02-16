@@ -136,7 +136,7 @@ class UserAPI:
             user = findUser(username)
             id = findId(username)
             if user.is_password(password):
-                return username, id
+                return username + ":" + str(id)
             return None
 
     
