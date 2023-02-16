@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
-
 from model.users import User
 from model.users import GPA
 from model.users import ClassReview
@@ -83,7 +82,7 @@ class UserAPI:
             return jsonify(json_ready)
     
     class _UpdateGPA(Resource):
-        def put(self):
+        def post(self):
             body = request.get_json()
             username = body.get('username')
             fives = int(body.get('fives'))
@@ -125,7 +124,7 @@ class UserAPI:
             user = findUser(username)
             if user.is_password(password):
                 return username
-            return False
+            return None
 
     
     class _ShowClassReview(Resource):
