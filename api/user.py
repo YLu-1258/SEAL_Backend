@@ -4,6 +4,7 @@ from datetime import datetime
 from model.users import User
 from model.users import GPA
 from model.users import ClassReview
+from model.users import Tasks
 
 user_api = Blueprint('user_api', __name__,
                    url_prefix='/api/users')
@@ -28,6 +29,11 @@ def findId(username):
 def findUser(username): 
     user = User.query.filter_by(_username=username).first()
     return user
+
+def task_obj_by_username(username):
+    """finds User in table matching username """
+    id = User.query.filter_by(_username=username).first().id
+    return Tasks.query.filter_by(id=id).first()
 
 
 class UserAPI:        
@@ -201,6 +207,19 @@ class UserAPI:
             users = User.query.all()
             json_ready = [user.total_time() for user in users]
             return jsonify(json_ready)
+        
+    class _UpdateTasks(Resource):
+        def put(self):
+            body = request.get_json()
+            username = body.get('username')
+            tasks = body.get('tasks')
+            times = body.get('times')
+            user = task_obj_by_username(username)
+            if user:
+                user.update(taskName=tasks, time=times)
+            else:
+                return {'message': f"unable to find user '{username}'"}, 210
+            return user.read()
 
     # building RESTapi endpoint
     api.add_resource(_Create, '/create')
@@ -208,6 +227,7 @@ class UserAPI:
     api.add_resource(_AverageGPA, '/gpa')
     api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
+    api.add_resource(_UpdateTasks, '/time/update')
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
     api.add_resource(_CreateClassReview, '/createclassreview')
