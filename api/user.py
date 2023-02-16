@@ -140,7 +140,7 @@ class UserAPI:
             return jsonify(json_ready)
 
     class _UpdateClassReview(Resource):
-        def put(self):
+        def post(self):
             body = request.get_json()
             username = body.get('username')
             className = body.get('className')
