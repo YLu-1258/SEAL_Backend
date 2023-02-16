@@ -148,6 +148,24 @@ class Classes(db.Model):
             "teach5": self.teach5
         }
 
+    def update(self, username="", per1="", per2="", per3="", per4="", per5="", teach1="", teach2="", teach3="", teach4="", teach5=""):
+        #only updates values with length
+        if len(username) > 0:
+            self.username = username
+        if len(per1) and len(per2) and len(per3) and len(per4) and len(per5) and len(teach1) and len(teach2) and len(teach3) and len(teach4) and len(teach5)> 0:
+            self.per1 = per1
+            self.per2 = per2
+            self.per3 = per3
+            self.per4 = per4
+            self.per5 = per5
+            self.teach1 = teach1
+            self.teach2 = teach2
+            self.teach3 = teach3
+            self.teach4 = teach4
+            self.teach5 = teach5
+        db.session.commit()
+        return self
+
 
 class Tasks(db.Model):
     __tablename__ = 'tasks'

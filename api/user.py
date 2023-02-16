@@ -5,6 +5,7 @@ from model.users import User
 from model.users import GPA
 from model.users import ClassReview
 from model.users import Tasks
+from model.users import Classes as Schedules
 
 user_api = Blueprint('user_api', __name__,
                    url_prefix='/api/users')
@@ -221,6 +222,33 @@ class UserAPI:
                 return {'message': f"unable to find user '{username}'"}, 210
             return user.read()
 
+    class _Schedules (Resource):
+        def get(self):
+            users = Schedules.query.all()
+            json_ready = [user.read() for user in users]
+            return jsonify(json_ready)
+
+    class _UpdateSchedules(Resource):
+        def put(self):
+            body = request.get_json()
+            username = body.get('username')
+            tasks = body.get('per1')
+            tasks = body.get('per2')
+            tasks = body.get('per3')
+            tasks = body.get('per4')
+            tasks = body.get('per5')
+            tasks = body.get('teach1')
+            tasks = body.get('teach2')
+            tasks = body.get('teach3')
+            tasks = body.get('teach4')
+            tasks = body.get('teach5')
+            user = task_obj_by_username(username)
+            if user:
+                user.update(username=username, per1=per1, per2=per2, per3=per3, per4=per4, per5=per5, teach1=teach1, teach2=teach2, teach3=teach3, teach4=teach4, teach5=teach5)
+            else:
+                return {'message': f"unable to find user '{username}'"}, 210
+            return user.read()
+
     # building RESTapi endpoint
     api.add_resource(_Create, '/create')
     api.add_resource(_Read, '/')
@@ -228,6 +256,7 @@ class UserAPI:
     api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_UpdateTasks, '/time/update')
+    api.add_resource(_UpdateSchedules, '/schedule/update')
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
     api.add_resource(_CreateClassReview, '/createclassreview')
