@@ -118,7 +118,7 @@ class UserAPI:
             return user.read()
 
     class _Authenticate(Resource):
-        def get(self):
+        def post(self):
             body = request.get_json()
             username = body.get('username')
             password = body.get('password')
