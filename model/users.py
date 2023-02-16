@@ -440,28 +440,45 @@ class User(db.Model):
             
             if len(classReviews) < 1:
                 return {
-                    "user_id": None,
-                    "username": None,
-                    "avg_w_gpa": None,
-                    "avg_uw_gpa": None
+                    "user_id": classReviews[0]["userID"],
+                    "className": None,
+                    "difficulty": None,
+                    "hoursOfHw": None,
+                    "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
                 }
             
-        except IndexError:
+        except:
             return {
-            "user_id": None,
-            "username": None,
-            "avg_w_gpa": None,
-            "avg_uw_gpa": None
-        }
-        return {
             "user_id": classReviews[0]["userID"],
-            "className": classReviews[0]["className"],
-            "difficulty": classReviews[0]["difficulty"],
-            "hoursOfHw": classReviews[0]["hoursOfHw"],
-            "daysBtwTest": classReviews[0]["daysBtwTest"],
-            "memorizationLevel": classReviews[0]["memorizationLevel"],
-            "comments": classReviews[0]["comments"]
+            "className": None,
+            "difficulty": None,
+            "hoursOfHw": None,
+            "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
         }
+        try:
+            return {
+                "user_id": classReviews[0]["userID"],
+                "className": classReviews[0]["className"],
+                "difficulty": classReviews[0]["difficulty"],
+                "hoursOfHw": classReviews[0]["hoursOfHw"],
+                "daysBtwTest": classReviews[0]["daysBtwTest"],
+                "memorizationLevel": classReviews[0]["memorizationLevel"],
+                "comments": classReviews[0]["comments"]
+            }
+        except:
+              return {
+            "user_id": classReviews[0]["userID"],
+            "className": None,
+            "difficulty": None,
+            "hoursOfHw": None,
+            "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
+        } 
 
     def total_time(self):
         try:
