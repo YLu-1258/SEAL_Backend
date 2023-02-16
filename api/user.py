@@ -234,7 +234,7 @@ class UserAPI:
             return jsonify(json_ready)
 
     class _UpdateSchedules(Resource):
-        def put(self):
+        def post(self):
             body = request.get_json()
             username = body.get('username')
             id = findId(username)
