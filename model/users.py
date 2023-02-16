@@ -417,8 +417,8 @@ class User(db.Model):
         print("GPAS:", gpas)
         try:
             total_courses = gpas[0]["fives"] + gpas[0]["fours"] + gpas[0]["threes"] + gpas[0]["twos"] + gpas[0]["ones"] + gpas[0]["zeroes"]
-            avg_w_gpa = (5 * gpas[0]["fives"] + 4 * gpas[0]["fours"] + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
-            avg_uw_gpa = (4 * (gpas[0]["fives"] + gpas[0]["fours"]) + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses
+            avg_w_gpa = float("{0:.2f}".format((5 * gpas[0]["fives"] + 4 * gpas[0]["fours"] + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses))
+            avg_uw_gpa = float("{0:.2f}".format((4 * (gpas[0]["fives"] + gpas[0]["fours"]) + 3*gpas[0]["threes"] + 2 * gpas[0]["twos"] + gpas[0]["ones"])/total_courses))
             return {
                 "user_id": gpas[0]["userID"],
                 "username": self.username,
