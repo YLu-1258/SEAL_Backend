@@ -402,14 +402,14 @@ class User(db.Model):
             gpas = [grade.read() for grade in self.gpa]
             if len(gpas) < 1:
                 return {
-                    "user_id": None,
+                    "user_id": gpas[0]["userID"],
                     "username": None,
                     "avg_w_gpa": None,
                     "avg_uw_gpa": None
                 }
         except:
             return {
-            "user_id": None,
+            "user_id": gpas[0]["userID"],
             "username": None,
             "avg_w_gpa": None,
             "avg_uw_gpa": None
@@ -427,7 +427,7 @@ class User(db.Model):
             }
         except:
             return {
-            "user_id": None,
+            "user_id": gpas[0]["userID"],
             "username": None,
             "avg_w_gpa": None,
             "avg_uw_gpa": None
