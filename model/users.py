@@ -407,7 +407,7 @@ class User(db.Model):
                     "avg_w_gpa": None,
                     "avg_uw_gpa": None
                 }
-        except IndexError:
+        except:
             return {
             "user_id": None,
             "username": None,
