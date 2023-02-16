@@ -403,14 +403,14 @@ class User(db.Model):
             if len(gpas) < 1:
                 return {
                     "user_id": gpas[0]["userID"],
-                    "username": None,
+                    "username": self.username,
                     "avg_w_gpa": None,
                     "avg_uw_gpa": None
                 }
         except:
             return {
             "user_id": gpas[0]["userID"],
-            "username": None,
+            "username": self.username,
             "avg_w_gpa": None,
             "avg_uw_gpa": None
         }
@@ -428,7 +428,7 @@ class User(db.Model):
         except:
             return {
             "user_id": gpas[0]["userID"],
-            "username": None,
+            "username": self.username,
             "avg_w_gpa": None,
             "avg_uw_gpa": None
         }
