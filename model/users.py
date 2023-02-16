@@ -148,10 +148,9 @@ class Classes(db.Model):
             "teach5": self.teach5
         }
 
-    def update(self, username="", per1="", per2="", per3="", per4="", per5="", teach1="", teach2="", teach3="", teach4="", teach5=""):
+    def update(self, id="", per1="", per2="", per3="", per4="", per5="", teach1="", teach2="", teach3="", teach4="", teach5=""):
         #only updates values with length
-        if len(username) > 0:
-            self.username = username
+        self.userID = id
         if len(per1) and len(per2) and len(per3) and len(per4) and len(per5) and len(teach1) and len(teach2) and len(teach3) and len(teach4) and len(teach5)> 0:
             self.per1 = per1
             self.per2 = per2

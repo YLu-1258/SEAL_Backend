@@ -36,6 +36,11 @@ def task_obj_by_username(username):
     id = User.query.filter_by(_username=username).first().id
     return Tasks.query.filter_by(id=id).first()
 
+def class_obj_by_username(username):
+    """finds User in table matching username """
+    id = User.query.filter_by(_username=username).first().id
+    return Schedules.query.filter_by(id=id).first()
+
 
 class UserAPI:        
     class _Create(Resource):
@@ -232,19 +237,22 @@ class UserAPI:
         def put(self):
             body = request.get_json()
             username = body.get('username')
-            tasks = body.get('per1')
-            tasks = body.get('per2')
-            tasks = body.get('per3')
-            tasks = body.get('per4')
-            tasks = body.get('per5')
-            tasks = body.get('teach1')
-            tasks = body.get('teach2')
-            tasks = body.get('teach3')
-            tasks = body.get('teach4')
-            tasks = body.get('teach5')
-            user = task_obj_by_username(username)
+            id = findId(username)
+            per1 = body.get('per1')
+            per2 = body.get('per2')
+            per3 = body.get('per3')
+            per4 = body.get('per4')
+            per5 = body.get('per5')
+            teach1 = body.get('teach1')
+            teach2 = body.get('teach2')
+            teach3 = body.get('teach3')
+            teach4 = body.get('teach4')
+            teach5 = body.get('teach5')
+            user = class_obj_by_username(username)
+            print(user)
+            print(id)
             if user:
-                user.update(username=username, per1=per1, per2=per2, per3=per3, per4=per4, per5=per5, teach1=teach1, teach2=teach2, teach3=teach3, teach4=teach4, teach5=teach5)
+                user.update(id=id, per1=per1, per2=per2, per3=per3, per4=per4, per5=per5, teach1=teach1, teach2=teach2, teach3=teach3, teach4=teach4, teach5=teach5)
             else:
                 return {'message': f"unable to find user '{username}'"}, 210
             return user.read()
