@@ -24,6 +24,48 @@ def classReview_obj_by_username(username, className):
     print("Class review: " + str(ClassReview.query.filter_by(userID=id, className=className).first()))
     return ClassReview.query.filter_by(userID=id, className=className).first()
 
+def getClassReview(classReview):
+    # print("ORIGINAL" + str(self.classReviews))
+    #classReviews = [classReview.read() for classReview in self.classReviews]
+    # print("CLASSREVIEW: " + str(classReviews))
+    # print("*******")
+    # print("Size: " + str(len(classReviews)))
+    # print("DATABASE: " + str(ClassReview.query.all()))
+
+    # classReview = ClassReview.query.all()
+    # print("VAR: " + str(classReview[0].className))
+
+    # print("************")
+    
+    # listReview = []
+    
+    # for i in range (len(classReview)): 
+    #     user_id = str(classReview[i].id)
+    #     className = str(classReview[i].className)
+    #     difficulty = str(classReview[i].difficulty )
+    #     hoursOfHw = str(classReview[i].hoursOfHw)
+    #     daysBtwTest = str(classReview[i].daysBtwTest)
+    #     memorizationlevel = str(classReview[i].memorizationLevel)
+    #     comments = str(classReview[i].comments)
+        
+    #     review = "{user_id: " + user_id + "}"
+    #     print(jsonify(review))
+    #     listReview.append(review)
+    
+    # print("listReview: " + str(listReview))
+
+    #variable names = column name in database
+    return {
+        "id": classReview.id, 
+        "user_id": classReview.userID,
+        "className": classReview.className, 
+        "difficulty": classReview.difficulty, 
+        "hoursOfHw": classReview.hoursOfHw, 
+        "daysBtwTest": classReview.daysBtwTest, 
+        "memorizationLevel": classReview.memorizationLevel, 
+        "comments": classReview.comments, 
+            }
+
 def findId(username): 
     id = User.query.filter_by(_username=username).first().id
     return id 
@@ -143,9 +185,19 @@ class UserAPI:
     
     class _ShowClassReview(Resource):
         def get(self):
-            users = User.query.all()
-            json_ready = [user.showClassReview() for user in users]
-            return jsonify(json_ready)
+            users = User.query.first()
+            # json_ready = [user.showClassReview() for user in users]
+            #json_ready = getClassReview()
+            
+            reviewList = []
+            
+            classReview = ClassReview.query.all()
+            for i in range (1, len(classReview) + 1): 
+                review = getClassReview(ClassReview.query.filter_by(id=i).first())
+                reviewList.append(review)
+                #print("FOR LOOP: " + str(ClassReview.query.filter_by(id=i).first()))
+            return jsonify(reviewList)
+            #return jsonify(json_ready)
 
     class _UpdateClassReview(Resource):
         def post(self):

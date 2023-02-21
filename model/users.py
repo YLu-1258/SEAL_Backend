@@ -451,9 +451,53 @@ class User(db.Model):
         }
 
     def showClassReview(self):
+        # print("ORIGINAL" + str(self.classReviews))
+        classReviews = [classReview.read() for classReview in self.classReviews]
+        # print("CLASSREVIEW: " + str(classReviews))
+        # print("*******")
+        # print("Size: " + str(len(classReviews)))
+        print("DATABASE: " + str(ClassReview.query.all()))
+
+        classReview = ClassReview.query.all()
+        print("VAR: " + str(classReview[0].className))
+
+        print("************")
+        
+        listReview = []
+        
+        for i in range (len(classReview)): 
+            user_id = str(classReview[i].id)
+            className = str(classReview[i].className)
+            difficulty = str(classReview[i].difficulty )
+            hoursOfHw = str(classReview[i].hoursOfHw)
+            daysBtwTest = str(classReview[i].daysBtwTest)
+            memorizationlevel = str(classReview[i].memorizationLevel)
+            comments = str(classReview[i].comments)
+            
+            review = "{\'user_id\': " + user_id + "}"
+            listReview += review
+        
+        return listReview 
+        
+        """
+        return {
+            "user_id": classReviews[0]["userID"],
+            "className": None,
+            "difficulty": None,
+            "hoursOfHw": None,
+            "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
+        } 
+        """
+        """
         try:
+            print("ORIGINAL" + str(self.classReviews))
             classReviews = [classReview.read() for classReview in self.classReviews]
-            print("CLASSREVIEW: " + str(classReviews[0]))
+            print("CLASSREVIEW: " + str(classReviews))
+            print("*******")
+            print("Size: " + str(len(classReviews)))
+            print("DATABASE: " + str(ClassReview.query.all()))
             
             if len(classReviews) < 1:
                 return {
@@ -476,6 +520,8 @@ class User(db.Model):
             "memorizationLevel": None,
             "comments": None
         }
+        """
+        """
         try:
             return {
                 "user_id": classReviews[0]["userID"],
@@ -487,7 +533,7 @@ class User(db.Model):
                 "comments": classReviews[0]["comments"]
             }
         except:
-              return {
+            return {
             "user_id": classReviews[0]["userID"],
             "className": None,
             "difficulty": None,
@@ -496,6 +542,7 @@ class User(db.Model):
             "memorizationLevel": None,
             "comments": None
         } 
+        """
 
     def total_time(self):
         try:
