@@ -18,10 +18,11 @@ def gpa_obj_by_username(username):
     id = User.query.filter_by(_username=username).first().id
     return GPA.query.filter_by(id=id).first()
 
-def classReview_obj_by_username(username):
+def classReview_obj_by_username(username, className):
     """finds User in table matching username """
     id = User.query.filter_by(_username=username).first().id
-    return ClassReview.query.filter_by(id=id).first()
+    print("Class review: " + str(ClassReview.query.filter_by(userID=id, className=className).first()))
+    return ClassReview.query.filter_by(userID=id, className=className).first()
 
 def findId(username): 
     id = User.query.filter_by(_username=username).first().id
@@ -165,7 +166,7 @@ class UserAPI:
             if memorizationLevel < 0:
                 return {'message': f'Invalid number'}, 210
 
-            user = classReview_obj_by_username(username)
+            user = classReview_obj_by_username(username, className)
             if user:
                 user.update(className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments)
             else:
