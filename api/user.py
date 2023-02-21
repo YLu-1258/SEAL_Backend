@@ -225,6 +225,25 @@ class UserAPI:
                 return {'message': f"unable to find GPA entries of user '{username}'"}, 210
             return user.read()
 
+    class _DeleteClassReview(Resource):
+        def post(self):
+            body = request.get_json()
+            username = body.get('username')
+            className = body.get('className')
+
+            deleteClass = classReview_obj_by_username(username, className)
+            print(deleteClass)
+            
+            
+            if deleteClass:
+                #NO NEED TO PASS CLASS AS ARGUMENT BECAUSE METHOD DEFAULT
+                #TAKES IT IN AS self
+                deleteClass.delete()
+            else:
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+            return deleteClass.read()
+            
+
     class _CreateClassReview(Resource):
         def post(self):
             ''' Read data for json body '''
@@ -323,4 +342,5 @@ class UserAPI:
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
     api.add_resource(_CreateClassReview, '/createclassreview')
+    api.add_resource(_DeleteClassReview, '/deleteclassreview')
     api.add_resource(_Authenticate, '/auth')

@@ -295,6 +295,12 @@ class ClassReview(db.Model):
         db.session.commit()
         return self 
 
+    def delete(self):
+        #print(ClassReview.query.filter_by(userID=id, className=className).first())
+        db.session.delete(self)
+        db.session.commit()
+        return None
+
 
 # Define the User class to manage actions in the 'users' table
 # -- Object Relational Mapping (ORM) is the key concept of SQLAlchemy
