@@ -230,6 +230,7 @@ class ClassReview(db.Model):
     # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
     userID = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    #columns (class review inputs)
     className = db.Column(db.String(255), unique=False, nullable=False)
     difficulty = db.Column(db.String(255), unique=False, nullable=False)
     hoursOfHw = db.Column(db.String(255), unique=False, nullable=False)
@@ -457,6 +458,9 @@ class User(db.Model):
         }
 
     def showClassReview(self):
+        #THE CODE BELOW ISN'T USED ANYMORE
+        
+        
         # print("ORIGINAL" + str(self.classReviews))
         classReviews = [classReview.read() for classReview in self.classReviews]
         # print("CLASSREVIEW: " + str(classReviews))

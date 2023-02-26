@@ -185,17 +185,23 @@ class UserAPI:
     
     class _ShowClassReview(Resource):
         def get(self):
-            users = User.query.first()
+            #original code commented out because only searched for one class review per user
+            #(code below searches for all class reviews, even if one user posted many)
+            #users = User.query.first()
             # json_ready = [user.showClassReview() for user in users]
             #json_ready = getClassReview()
             
             reviewList = []
             
+            #get all class reviews
             classReview = ClassReview.query.all()
+            #get an individual class review based on id, then add to reviewList
             for i in range (1, len(classReview) + 1): 
                 review = getClassReview(ClassReview.query.filter_by(id=i).first())
                 reviewList.append(review)
                 #print("FOR LOOP: " + str(ClassReview.query.filter_by(id=i).first()))
+
+            #print out reviewlist in json format
             return jsonify(reviewList)
             #return jsonify(json_ready)
 
@@ -209,6 +215,7 @@ class UserAPI:
             daysBtwTest = int(body.get('daysBtwTest'))
             memorizationLevel = int(body.get('memorizationLevel'))
             comments = body.get('comments')
+            #error checking
             if difficulty < 0:
                 return {'message': f'Invalid number'}, 210
             if hoursOfHw < 0:
@@ -218,11 +225,12 @@ class UserAPI:
             if memorizationLevel < 0:
                 return {'message': f'Invalid number'}, 210
 
+            #search for review based on username and classname
             user = classReview_obj_by_username(username, className)
             if user:
                 user.update(className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments)
             else:
-                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+                return {'message': f"unable to find class review entries of user '{username}'"}, 210
             return user.read()
 
     class _DeleteClassReview(Resource):
@@ -231,6 +239,7 @@ class UserAPI:
             username = body.get('username')
             className = body.get('className')
 
+            #search for review to delete based on username and classname
             deleteClass = classReview_obj_by_username(username, className)
             print(deleteClass)
             
@@ -269,6 +278,7 @@ class UserAPI:
             
             id = findId(username)
             
+            #create a review object based on user's input
             review = ClassReview(id=id, className=className, difficulty=difficulty, hoursOfHw=hoursOfHw, daysBtwTest=daysBtwTest, memorizationLevel=memorizationLevel, comments=comments)
 
            
