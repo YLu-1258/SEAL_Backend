@@ -87,17 +87,29 @@ class UserAPI:
             json_ready = [user.avg_gpa() for user in users]
             return jsonify(json_ready)
     
+    class _DeleteGPA(Resource):                     # This resource aims to delete a gpa row in the db
+        def delete(self):
+            body = request.get_json()               # We grab our body
+            username = body.get('username')         # Get the username of the user from the cookie, will process in frontend
+            user = gpa_obj_by_username(username)
+            if user:                                # Check if user exists
+                user.delete()                       # call delete
+            else:                                   # if user does not exist
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+            return user.read()
+            
+
     class _UpdateGPA(Resource):
         def post(self):
-            body = request.get_json()
-            username = body.get('username')
-            fives = int(body.get('fives'))
+            body = request.get_json()               # We grab our body
+            username = body.get('username')         # Extract the username of the user from the frontend
+            fives = int(body.get('fives'))          # get number of gpa entires for each grade
             fours = int(body.get('fours'))
             threes = int(body.get('threes'))
             twos = int(body.get('twos'))
             ones = int(body.get('ones'))
             zeroes = int(body.get('zeroes'))
-            if fives < 0:
+            if fives < 0:                           # Error check the data recieved, make sure the values are positive numbers
                 return {'message': f'Invalid number of fives'}, 210
             if fours < 0:
                 return {'message': f'Invalid number of fours'}, 210
@@ -110,16 +122,16 @@ class UserAPI:
             if zeroes < 0:
                 return {'message': f'Invalid number of zeroes'}, 210
 
-            user = gpa_obj_by_username(username)
+            user = gpa_obj_by_username(username)                                                # Grab username
             if user:
-                user.update(fives, fours, threes, twos, ones, zeroes)
+                user.update(fives, fours, threes, twos, ones, zeroes)                           # Update the user entry in the database
             else:
-                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210     # error msg
             return user.read()
 
-    class _Authenticate(Resource):
+    class _Authenticate(Resource):                  # Authenticates an user by checking the backend
         def post(self):
-            body = request.get_json()
+            body = request.get_json()               # grab info from frontend
             username = body.get('username')
             password = body.get('password')
             if len(username) < 1:
@@ -128,11 +140,11 @@ class UserAPI:
                 return {'message': f'Empty Password'}, 210
 
             user = findUser(username)
-            if user.is_password(password):
-                return username
+            if user.is_password(password):          # Check if there is a password match
+                return username                     # Return username if true
             return None
 
-    
+
     class _ShowClassReview(Resource):
         def get(self):
             users = User.query.all()
@@ -225,6 +237,7 @@ class UserAPI:
     api.add_resource(_Create, '/create')
     api.add_resource(_Read, '/')
     api.add_resource(_AverageGPA, '/gpa')
+    api.add_resource(_DeleteGPA, '/gpa/delete')
     api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_UpdateTasks, '/time/update')

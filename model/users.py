@@ -15,6 +15,7 @@ class GPA(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
     userID = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # Now we create the rows for the database
     fives = db.Column(db.Integer, unique=False, nullable=False)
     fours = db.Column(db.Integer, unique=False, nullable=False)
     threes = db.Column(db.Integer, unique=False, nullable=False)
@@ -22,7 +23,7 @@ class GPA(db.Model):
     ones = db.Column(db.Integer, unique=False, nullable=False)
     zeroes = db.Column(db.Integer, unique=False, nullable=False)
 
-    def __init__(self, id, fives, fours, threes, twos, ones, zeroes):
+    def __init__(self, id, fives, fours, threes, twos, ones, zeroes): # Initialize the user variables for the GPA object
         self.userID = id
         self.fives = fives
         self.fours = fours
@@ -147,6 +148,13 @@ class Classes(db.Model):
             "teach4": self.teach4,
             "teach5": self.teach5
         }
+    
+    # CRUD delete: remove self
+    # None
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return None
 
 
 class Tasks(db.Model):
