@@ -156,6 +156,23 @@ class Classes(db.Model):
         db.session.commit()
         return None
 
+    def update(self, id="", per1="", per2="", per3="", per4="", per5="", teach1="", teach2="", teach3="", teach4="", teach5=""):
+        #only updates values with length
+        self.userID = id
+        if len(per1) and len(per2) and len(per3) and len(per4) and len(per5) and len(teach1) and len(teach2) and len(teach3) and len(teach4) and len(teach5)> 0:
+            self.per1 = per1
+            self.per2 = per2
+            self.per3 = per3
+            self.per4 = per4
+            self.per5 = per5
+            self.teach1 = teach1
+            self.teach2 = teach2
+            self.teach3 = teach3
+            self.teach4 = teach4
+            self.teach5 = teach5
+        db.session.commit()
+        return self
+
 
 class Tasks(db.Model):
     __tablename__ = 'tasks'
@@ -221,6 +238,7 @@ class ClassReview(db.Model):
     # Define a relationship in classes Schema to userID who originates the classes, many-to-one (many classes to one user)
     userID = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    #columns (class review inputs)
     className = db.Column(db.String(255), unique=False, nullable=False)
     difficulty = db.Column(db.String(255), unique=False, nullable=False)
     hoursOfHw = db.Column(db.String(255), unique=False, nullable=False)
@@ -285,6 +303,12 @@ class ClassReview(db.Model):
         self.comments = comments
         db.session.commit()
         return self 
+
+    def delete(self):
+        #print(ClassReview.query.filter_by(userID=id, className=className).first())
+        db.session.delete(self)
+        db.session.commit()
+        return None
 
 
 # Define the User class to manage actions in the 'users' table
@@ -442,34 +466,101 @@ class User(db.Model):
         }
 
     def showClassReview(self):
+        #THE CODE BELOW ISN'T USED ANYMORE
+        
+        
+        # print("ORIGINAL" + str(self.classReviews))
+        classReviews = [classReview.read() for classReview in self.classReviews]
+        # print("CLASSREVIEW: " + str(classReviews))
+        # print("*******")
+        # print("Size: " + str(len(classReviews)))
+        print("DATABASE: " + str(ClassReview.query.all()))
+
+        classReview = ClassReview.query.all()
+        print("VAR: " + str(classReview[0].className))
+
+        print("************")
+        
+        listReview = []
+        
+        for i in range (len(classReview)): 
+            user_id = str(classReview[i].id)
+            className = str(classReview[i].className)
+            difficulty = str(classReview[i].difficulty )
+            hoursOfHw = str(classReview[i].hoursOfHw)
+            daysBtwTest = str(classReview[i].daysBtwTest)
+            memorizationlevel = str(classReview[i].memorizationLevel)
+            comments = str(classReview[i].comments)
+            
+            review = "{\'user_id\': " + user_id + "}"
+            listReview += review
+        
+        return listReview 
+        
+        """
+        return {
+            "user_id": classReviews[0]["userID"],
+            "className": None,
+            "difficulty": None,
+            "hoursOfHw": None,
+            "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
+        } 
+        """
+        """
         try:
+            print("ORIGINAL" + str(self.classReviews))
             classReviews = [classReview.read() for classReview in self.classReviews]
-            print("CLASSREVIEW: " + str(classReviews[0]))
+            print("CLASSREVIEW: " + str(classReviews))
+            print("*******")
+            print("Size: " + str(len(classReviews)))
+            print("DATABASE: " + str(ClassReview.query.all()))
             
             if len(classReviews) < 1:
                 return {
-                    "user_id": None,
-                    "username": None,
-                    "avg_w_gpa": None,
-                    "avg_uw_gpa": None
+                    "user_id": classReviews[0]["userID"],
+                    "className": None,
+                    "difficulty": None,
+                    "hoursOfHw": None,
+                    "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
                 }
             
-        except IndexError:
+        except:
             return {
-            "user_id": None,
-            "username": None,
-            "avg_w_gpa": None,
-            "avg_uw_gpa": None
-        }
-        return {
             "user_id": classReviews[0]["userID"],
-            "className": classReviews[0]["className"],
-            "difficulty": classReviews[0]["difficulty"],
-            "hoursOfHw": classReviews[0]["hoursOfHw"],
-            "daysBtwTest": classReviews[0]["daysBtwTest"],
-            "memorizationLevel": classReviews[0]["memorizationLevel"],
-            "comments": classReviews[0]["comments"]
+            "className": None,
+            "difficulty": None,
+            "hoursOfHw": None,
+            "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
         }
+        """
+        """
+        try:
+            return {
+                "user_id": classReviews[0]["userID"],
+                "className": classReviews[0]["className"],
+                "difficulty": classReviews[0]["difficulty"],
+                "hoursOfHw": classReviews[0]["hoursOfHw"],
+                "daysBtwTest": classReviews[0]["daysBtwTest"],
+                "memorizationLevel": classReviews[0]["memorizationLevel"],
+                "comments": classReviews[0]["comments"]
+            }
+        except:
+            return {
+            "user_id": classReviews[0]["userID"],
+            "className": None,
+            "difficulty": None,
+            "hoursOfHw": None,
+            "daysBtwTest": None,
+            "memorizationLevel": None,
+            "comments": None
+        } 
+        """
 
     def total_time(self):
         try:

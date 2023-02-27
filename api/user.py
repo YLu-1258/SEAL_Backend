@@ -5,6 +5,7 @@ from model.users import User
 from model.users import GPA
 from model.users import ClassReview
 from model.users import Tasks
+from model.users import Classes as Schedules
 
 user_api = Blueprint('user_api', __name__,
                    url_prefix='/api/users')
@@ -17,10 +18,53 @@ def gpa_obj_by_username(username):
     id = User.query.filter_by(_username=username).first().id
     return GPA.query.filter_by(id=id).first()
 
-def classReview_obj_by_username(username):
+def classReview_obj_by_username(username, className):
     """finds User in table matching username """
     id = User.query.filter_by(_username=username).first().id
-    return ClassReview.query.filter_by(id=id).first()
+    print("Class review: " + str(ClassReview.query.filter_by(userID=id, className=className).first()))
+    return ClassReview.query.filter_by(userID=id, className=className).first()
+
+def getClassReview(classReview):
+    # print("ORIGINAL" + str(self.classReviews))
+    #classReviews = [classReview.read() for classReview in self.classReviews]
+    # print("CLASSREVIEW: " + str(classReviews))
+    # print("*******")
+    # print("Size: " + str(len(classReviews)))
+    # print("DATABASE: " + str(ClassReview.query.all()))
+
+    # classReview = ClassReview.query.all()
+    # print("VAR: " + str(classReview[0].className))
+
+    # print("************")
+    
+    # listReview = []
+    
+    # for i in range (len(classReview)): 
+    #     user_id = str(classReview[i].id)
+    #     className = str(classReview[i].className)
+    #     difficulty = str(classReview[i].difficulty )
+    #     hoursOfHw = str(classReview[i].hoursOfHw)
+    #     daysBtwTest = str(classReview[i].daysBtwTest)
+    #     memorizationlevel = str(classReview[i].memorizationLevel)
+    #     comments = str(classReview[i].comments)
+        
+    #     review = "{user_id: " + user_id + "}"
+    #     print(jsonify(review))
+    #     listReview.append(review)
+    
+    # print("listReview: " + str(listReview))
+
+    #variable names = column name in database
+    return {
+        "id": classReview.id, 
+        "user_id": classReview.userID,
+        "className": classReview.className, 
+        "difficulty": classReview.difficulty, 
+        "hoursOfHw": classReview.hoursOfHw, 
+        "daysBtwTest": classReview.daysBtwTest, 
+        "memorizationLevel": classReview.memorizationLevel, 
+        "comments": classReview.comments, 
+            }
 
 def findId(username): 
     id = User.query.filter_by(_username=username).first().id
@@ -34,6 +78,11 @@ def task_obj_by_username(username):
     """finds User in table matching username """
     id = User.query.filter_by(_username=username).first().id
     return Tasks.query.filter_by(id=id).first()
+
+def class_obj_by_username(username):
+    """finds User in table matching username """
+    id = User.query.filter_by(_username=username).first().id
+    return Schedules.query.filter_by(id=id).first()
 
 
 class UserAPI:        
@@ -147,12 +196,28 @@ class UserAPI:
 
     class _ShowClassReview(Resource):
         def get(self):
-            users = User.query.all()
-            json_ready = [user.showClassReview() for user in users]
-            return jsonify(json_ready)
+            #original code commented out because only searched for one class review per user
+            #(code below searches for all class reviews, even if one user posted many)
+            #users = User.query.first()
+            # json_ready = [user.showClassReview() for user in users]
+            #json_ready = getClassReview()
+            
+            reviewList = []
+            
+            #get all class reviews
+            classReview = ClassReview.query.all()
+            #get an individual class review based on id, then add to reviewList
+            for i in range (1, len(classReview) + 1): 
+                review = getClassReview(ClassReview.query.filter_by(id=i).first())
+                reviewList.append(review)
+                #print("FOR LOOP: " + str(ClassReview.query.filter_by(id=i).first()))
+
+            #print out reviewlist in json format
+            return jsonify(reviewList)
+            #return jsonify(json_ready)
 
     class _UpdateClassReview(Resource):
-        def put(self):
+        def post(self):
             body = request.get_json()
             username = body.get('username')
             className = body.get('className')
@@ -161,6 +226,7 @@ class UserAPI:
             daysBtwTest = int(body.get('daysBtwTest'))
             memorizationLevel = int(body.get('memorizationLevel'))
             comments = body.get('comments')
+            #error checking
             if difficulty < 0:
                 return {'message': f'Invalid number'}, 210
             if hoursOfHw < 0:
@@ -170,12 +236,33 @@ class UserAPI:
             if memorizationLevel < 0:
                 return {'message': f'Invalid number'}, 210
 
-            user = classReview_obj_by_username(username)
+            #search for review based on username and classname
+            user = classReview_obj_by_username(username, className)
             if user:
                 user.update(className, difficulty, hoursOfHw, daysBtwTest, memorizationLevel, comments)
             else:
-                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+                return {'message': f"unable to find class review entries of user '{username}'"}, 210
             return user.read()
+
+    class _DeleteClassReview(Resource):
+        def post(self):
+            body = request.get_json()
+            username = body.get('username')
+            className = body.get('className')
+
+            #search for review to delete based on username and classname
+            deleteClass = classReview_obj_by_username(username, className)
+            print(deleteClass)
+            
+            
+            if deleteClass:
+                #NO NEED TO PASS CLASS AS ARGUMENT BECAUSE METHOD DEFAULT
+                #TAKES IT IN AS self
+                deleteClass.delete()
+            else:
+                return {'message': f"unable to find GPA entries of user '{username}'"}, 210
+            return deleteClass.read()
+            
 
     class _CreateClassReview(Resource):
         def post(self):
@@ -202,6 +289,7 @@ class UserAPI:
             
             id = findId(username)
             
+            #create a review object based on user's input
             review = ClassReview(id=id, className=className, difficulty=difficulty, hoursOfHw=hoursOfHw, daysBtwTest=daysBtwTest, memorizationLevel=memorizationLevel, comments=comments)
 
            
@@ -233,6 +321,36 @@ class UserAPI:
                 return {'message': f"unable to find user '{username}'"}, 210
             return user.read()
 
+    class _Schedules (Resource):
+        def get(self):
+            users = Schedules.query.all()
+            json_ready = [user.read() for user in users]
+            return jsonify(json_ready)
+
+    class _UpdateSchedules(Resource):
+        def post(self):
+            body = request.get_json()
+            username = body.get('username')
+            id = findId(username)
+            per1 = body.get('per1')
+            per2 = body.get('per2')
+            per3 = body.get('per3')
+            per4 = body.get('per4')
+            per5 = body.get('per5')
+            teach1 = body.get('teach1')
+            teach2 = body.get('teach2')
+            teach3 = body.get('teach3')
+            teach4 = body.get('teach4')
+            teach5 = body.get('teach5')
+            user = class_obj_by_username(username)
+            print(user)
+            print(id)
+            if user:
+                user.update(id=id, per1=per1, per2=per2, per3=per3, per4=per4, per5=per5, teach1=teach1, teach2=teach2, teach3=teach3, teach4=teach4, teach5=teach5)
+            else:
+                return {'message': f"unable to find user '{username}'"}, 210
+            return user.read()
+
     # building RESTapi endpoint
     api.add_resource(_Create, '/create')
     api.add_resource(_Read, '/')
@@ -241,7 +359,10 @@ class UserAPI:
     api.add_resource(_UpdateGPA, '/gpa/update')
     api.add_resource(_TotalTime, '/time')
     api.add_resource(_UpdateTasks, '/time/update')
+    api.add_resource(_UpdateSchedules, '/schedules/update')
+    api.add_resource(_Schedules, '/schedules')
     api.add_resource(_ShowClassReview, '/classreview')
     api.add_resource(_UpdateClassReview, '/updateclassreview')
     api.add_resource(_CreateClassReview, '/createclassreview')
+    api.add_resource(_DeleteClassReview, '/deleteclassreview')
     api.add_resource(_Authenticate, '/auth')
